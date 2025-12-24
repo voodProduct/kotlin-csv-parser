@@ -5,13 +5,14 @@ import arrow.core.right
 
 class ClientEntityTemplateTest(
     override val header: String,
-    override val delimiter: String
-) : CsvEntityTemplate<ClientEntityCsv>() {
+    override val delimiter: String,
+    headerWithIndex: Map<String, Int>
+) : CsvEntityTemplate<ClientEntityCsv>(headerWithIndex) {
 
     override fun toEntity(strValues: List<String>): Either<Throwable, ClientEntityCsv> {
 
         val prepareConvert = prepareConvert(
-            mapHeaderWithIndex,
+            headerWithIndex,
             strValues,
             ClientFieldsEnum.NAME::getString,
                     ClientFieldsEnum.AGE::getLong
@@ -21,8 +22,8 @@ class ClientEntityTemplateTest(
             return Either.Left(IllegalStateException(prepareConvert.joinToString(separator = "\n")))
 
         return ClientEntityCsv(
-            name = ClientFieldsEnum.NAME.getString(mapHeaderWithIndex, strValues),
-            age = ClientFieldsEnum.AGE.getLong(mapHeaderWithIndex, strValues)
+            name = ClientFieldsEnum.NAME.getString(headerWithIndex, strValues),
+            age = ClientFieldsEnum.AGE.getLong(headerWithIndex, strValues)
         ).right()
     }
 }

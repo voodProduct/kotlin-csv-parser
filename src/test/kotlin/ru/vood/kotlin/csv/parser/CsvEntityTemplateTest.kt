@@ -3,6 +3,7 @@ package ru.vood.kotlin.csv.parser
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.*
+import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
 
 val readerCsvImpl = ReaderCsvImpl()
 
@@ -13,18 +14,19 @@ class CsvEntityTemplateTest : FunSpec({
 
         val count = 3
         println(infiniteFlowClient().take(count).toList())
-
+        val parseHeader = parseHeader(headerTest, ";")
 
         val toList = readerCsvImpl
             .readCSV(
                 stringFlow = infiniteFlowClient().take(count),
                 delimiter = ";",
                 entity = ClientEntityTemplateTest(
-                    header = value,
-                    delimiter = ";"
-                )
+                    header = headerTest,
+                    delimiter = ";",
+                    headerWithIndex = parseHeader
+                ),
 
-            )
+                )
             .map {
                 println(it)
                 it
@@ -47,7 +49,7 @@ class CsvEntityTemplateTest : FunSpec({
 }) {
 
     companion object {
-        val value = "name;age"
+        val headerTest = "name;age"
         fun infiniteFlowClient(): Flow<String> {
 
             return flow {

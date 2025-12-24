@@ -12,7 +12,7 @@ class ReaderCsvImpl : IReaderCsv {
     override fun <T : ICSVLine> readCSV(
         stringFlow: Flow<String>,
         delimiter: String,
-        entity: CsvEntityTemplate<T>
+        entity: CsvEntityTemplate<T>,
     ): Flow<T> {
         val processDataFlow: Flow<T> = stringFlow
             .flowOn(dispatcher)
