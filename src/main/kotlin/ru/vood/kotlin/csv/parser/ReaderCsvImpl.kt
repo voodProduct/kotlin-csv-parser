@@ -27,7 +27,10 @@ class ReaderCsvImpl(
             .transform { string ->
                 if (parsedHeader.load() != null) {
                     val list = string.split(delimiter)
-                    entity.toEntity(list, parsedHeader.load() ?: error("Эта ошибка не должна возникнуть"))
+                    entity.toEntity(
+                        strValues = list,
+                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
+                    )
                         .onLeft { err ->
                             println(err.message)
 //                        entity.logger.error(err.message)

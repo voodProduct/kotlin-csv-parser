@@ -9,14 +9,6 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
 ) {
     abstract fun toEntity(strValues: List<String>, headerWithIndex: ParsedHeader): Either<Throwable, T>
 
-    abstract val delimiter: String
-//    val mapHeaderWithIndex: Map<String, Int> by lazy {
-//        val headerIndexesCsv = header.split(delimiter)
-//        headerIndexesCsv.withIndex().associate { it.value.lowercase() to it.index }
-//    }
-//    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
-
     fun prepareConvert(
         mapHeaderWithIndex: ParsedHeader,
         strValues: List<String>,
@@ -30,10 +22,10 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
                     err.message?.let { msg ->
                         add(
                             "Заголовок c колонками и их порядковыми номерами: ${
-                                mapHeaderWithIndex.headerWithIndex.map { "${it.key} -> ${it.value}" }.joinToString(delimiter)
+                                mapHeaderWithIndex.headerWithIndex.map { "${it.key} -> ${it.value}" }
                             }"
                         )
-                        add("Содержимое строки: ${strValues.joinToString(delimiter)}")
+                        add("Содержимое строки: $strValues")
                         add(msg)
                     }
                 }

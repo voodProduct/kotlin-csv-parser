@@ -18,9 +18,7 @@ class CsvEntityTemplateTest : FunSpec({
             .readCSV(
                 stringFlow = infiniteFlowClient().take(count),
                 delimiter = ";",
-                entity = ClientEntityTemplateTest(
-                    delimiter = ";",
-                )
+                entity = ClientEntityTemplateTest()
             )
             .map {
                 println(it)

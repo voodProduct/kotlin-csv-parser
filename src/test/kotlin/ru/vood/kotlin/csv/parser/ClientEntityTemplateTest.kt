@@ -3,9 +3,7 @@ package ru.vood.kotlin.csv.parser
 import arrow.core.Either
 import arrow.core.right
 
-class ClientEntityTemplateTest(
-    override val delimiter: String
-) : CsvEntityTemplate<ClientEntityCsv>() {
+class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
 
     override fun toEntity(
         strValues: List<String>,
