@@ -14,8 +14,8 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
         strValues: List<String>,
         vararg body: (mapHeaderWithIndex: Map<String, Int>, strValues: List<String>) -> Any?
     ): List<String> {
-        return buildList {
-            body.forEach {
+        val buildList = buildList {
+            body.forEach { it ->
                 runCatching {
                     it.invoke(mapHeaderWithIndex.headerWithIndex, strValues)
                 }.getOrElse { err ->
@@ -31,6 +31,7 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
                 }
             }
         }
+        return buildList
     }
 
     private companion object

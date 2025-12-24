@@ -13,7 +13,7 @@ class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
         val prepareConvert = prepareConvert(
             headerWithIndex,
             strValues,
-            ClientFieldsEnum.NAME::getString,
+            { mapHeaderWithIndex, strValues -> ClientFieldsEnum.NAME.getString(mapHeaderWithIndex, strValues) },
             ClientFieldsEnum.AGE::getLong
         )
 
