@@ -1,5 +1,7 @@
 package ru.vood.kotlin.csv.parser
 
+import arrow.core.Either
+import ru.vood.kotlin.csv.parser.error.ICsvError
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -161,5 +163,17 @@ interface IFieldConstants {
             append("Причина: ${err.message}.\n")
         }
         error(errorMessage)
+    }
+
+    private inline fun <reified T> convertEither(
+        field: IFieldConstants,
+        mapHeaderWithIndex: Map<String, Int>,
+        strValues: List<String>
+    ): Either<ICsvError, T> {
+        val key = field.fieldName.lowercase()
+        val convertEither = ReaderCsvConverter.convertEither<T>(
+            strValues[mapHeaderWithIndex.getValue(key)]
+        )
+        return convertEither
     }
 }

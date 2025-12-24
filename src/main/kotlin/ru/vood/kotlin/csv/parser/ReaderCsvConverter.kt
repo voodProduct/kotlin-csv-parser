@@ -1,10 +1,20 @@
 package ru.vood.kotlin.csv.parser
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import ru.vood.kotlin.csv.parser.error.CastError
+import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
+import ru.vood.kotlin.csv.parser.error.UnsupportedClassError
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+
+//typealias SupportedTypes = Boolean || Short
+//or Int or Long or Float or Double or String or LocalDateTime or LocalDate
 
 object ReaderCsvConverter {
     private val TIMEZONE = ZoneOffset.UTC
@@ -13,30 +23,7 @@ object ReaderCsvConverter {
         "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'" to LocalDateTime::class,
     )
 
-    fun convertToTypeOrError(fieldValue: String, classTypeValue: String): Any? {
-        return when (classTypeValue) {
-            Byte::class.simpleName -> convert<Byte>(fieldValue)
-            "${Byte::class.simpleName}?" -> convert<Byte?>(fieldValue)
-            Short::class.simpleName -> convert<Short>(fieldValue)
-            "${Short::class.simpleName}?" -> convert<Short?>(fieldValue)
-            Int::class.simpleName -> convert<Int>(fieldValue)
-            "${Int::class.simpleName}?" -> convert<Int?>(fieldValue)
-            Long::class.simpleName -> convert<Long>(fieldValue)
-            "${Long::class.simpleName}?" -> convert<Long?>(fieldValue)
-            Float::class.simpleName -> convert<Float>(fieldValue)
-            "${Float::class.simpleName}?" -> convert<Float?>(fieldValue)
-            Double::class.simpleName -> convert<Double>(fieldValue)
-            "${Double::class.simpleName}?" -> convert<Double?>(fieldValue)
-            Boolean::class.simpleName -> convert<Boolean>(fieldValue)
-            "${Boolean::class.simpleName}?" -> convert<Boolean?>(fieldValue)
-            String::class.simpleName -> convert<String>(fieldValue)
-            "${String::class.simpleName}?" -> convert<String?>(fieldValue)
-            LocalDateTime::class.simpleName -> convert<LocalDateTime>(fieldValue)
-            "${LocalDateTime::class.simpleName}?" -> convert<LocalDateTime?>(fieldValue)
-            else -> throw IllegalStateException("Unknown Generic Type")
-        }
-    }
-
+    @Deprecated("удалить позже")
     inline fun <reified T> convert(fieldValue: String): T {
         if (fieldValue == "" || fieldValue == "NULL") return null as T
         return when (T::class) {
@@ -53,13 +40,47 @@ object ReaderCsvConverter {
             else -> throw IllegalStateException("Unknown Generic Type")
         }
     }
-    fun String.toBoolean(): Boolean {
+
+    //    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T> convertEither(fieldValue: String): Either<ICsvError, T> {
+        if (fieldValue == "" || fieldValue == "NULL") return (null as T).right()
+        val either = when (T::class) {
+            Boolean::class -> fieldValue.toBoolean() as Either<ICsvError, T>
+            Short::class -> fieldValue.tryCast<T> { it.toShort() as T }
+            Int::class -> fieldValue.tryCast { it.toInt() as T }
+            Long::class -> fieldValue.tryCast { it.toLong() as T }
+            Float::class -> fieldValue.tryCast { it.toFloat() as T }
+            Double::class -> fieldValue.tryCast { it.toDouble() as T }
+            String::class -> fieldValue.tryCast { it as T }
+            LocalDateTime::class -> fieldValue.tryCast { it.toLocalDateTime() as T }
+            LocalDate::class -> fieldValue.tryCast { it.toLocalDateTime() as T }
+            else -> UnsupportedClassError("Unknown Generic Type ${T::class.java.canonicalName}").left()
+        }
+        return either
+    }
+
+    inline fun <reified T> convertEither(fieldValue: String, fCast: (String) -> T): Either<ICsvError, T> {
+        if (fieldValue == "" || fieldValue == "NULL") return (null as T).right()
+        return fieldValue.tryCast<T> { fCast(it) }
+    }
+
+    inline fun <reified T> String.tryCast(fCast: (String) -> T): Either<ICsvError, T> {
+        return Either.catch {
+            fCast(this)
+        }.fold(
+            { CastError(it::class, it.message!!).left() },
+            { it.right() }
+        ) as Either<ICsvError, T>
+
+    }
+
+    fun String.toBoolean(): Either<ICsvError, Boolean> {
         return when (this) {
-            "true" -> true
-            "false" -> false
-            "1" -> true
-            "0" -> false
-            else -> throw IllegalArgumentException("Ожидалось значение 1|0|true|false")
+            "true" -> true.right()
+            "false" -> false.right()
+            "1" -> true.right()
+            "0" -> false.right()
+            else -> UnsupportedBooleanValueError("Ожидалось значение 1|0|true|false").left()
         }
     }
 
