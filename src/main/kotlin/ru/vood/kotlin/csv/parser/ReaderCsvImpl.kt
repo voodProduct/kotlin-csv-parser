@@ -19,7 +19,6 @@ class ReaderCsvImpl(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
-        mapHeaderWithIndex: ParsedHeader,
     ): Flow<T> {
         val parsedHeader = AtomicReference<ParsedHeader?>(null)
         val processDataFlow = stringFlow
