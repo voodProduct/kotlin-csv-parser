@@ -14,14 +14,12 @@ class CsvEntityTemplateTest : FunSpec({
 
         val count = 3
         println(infiniteFlowClient().take(count).toList())
-        val parseHeader = parseHeader(headerTest, ";")
 
         val toList = readerCsvImpl
             .readCSV(
                 stringFlow = infiniteFlowClient().take(count),
                 delimiter = ";",
                 entity = ClientEntityTemplateTest(
-                    header = headerTest,
                     delimiter = ";",
                 )
             )

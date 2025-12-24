@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.right
 
 class ClientEntityTemplateTest(
-    override val header: String,
     override val delimiter: String
 ) : CsvEntityTemplate<ClientEntityCsv>() {
 

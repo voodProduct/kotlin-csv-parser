@@ -9,7 +9,6 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
 ) {
     abstract fun toEntity(strValues: List<String>, headerWithIndex: ParsedHeader): Either<Throwable, T>
 
-    abstract val header: String
     abstract val delimiter: String
 //    val mapHeaderWithIndex: Map<String, Int> by lazy {
 //        val headerIndexesCsv = header.split(delimiter)
