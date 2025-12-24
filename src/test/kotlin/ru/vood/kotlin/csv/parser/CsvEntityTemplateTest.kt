@@ -3,7 +3,6 @@ package ru.vood.kotlin.csv.parser
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.*
-import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
 
 val readerCsvImpl = ReaderCsvImpl()
 
@@ -31,7 +30,7 @@ class CsvEntityTemplateTest : FunSpec({
 
         println(toList)
 
-        toList.size shouldBe count-1
+        toList.size shouldBe count - 1
 
         /*
                 infiniteFlowClient()
