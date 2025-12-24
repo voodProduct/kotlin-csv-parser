@@ -14,7 +14,7 @@ class ClientEntityTemplateTest(
             mapHeaderWithIndex,
             strValues,
             ClientFieldsEnum.NAME::getString,
-                    ClientFieldsEnum.NAME::getLong
+                    ClientFieldsEnum.AGE::getLong
         )
 
         if (prepareConvert.isNotEmpty())
