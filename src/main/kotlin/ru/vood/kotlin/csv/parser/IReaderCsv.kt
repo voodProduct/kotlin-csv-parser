@@ -6,6 +6,7 @@ interface IReaderCsv {
     fun <T : ICSVLine> readCSV(
         stringFlow: Flow<String>,
         delimiter: String,
-        entity: CsvEntityTemplate<T>
+        entity: CsvEntityTemplate<T>,
+        mapHeaderWithIndex: Map<String, Int>,
     ): Flow<T>
 }

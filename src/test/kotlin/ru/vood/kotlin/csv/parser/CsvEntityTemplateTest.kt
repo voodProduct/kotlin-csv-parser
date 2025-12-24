@@ -23,10 +23,10 @@ class CsvEntityTemplateTest : FunSpec({
                 entity = ClientEntityTemplateTest(
                     header = headerTest,
                     delimiter = ";",
-                    headerWithIndex = parseHeader
-                ),
+                    ),
+                mapHeaderWithIndex = parseHeader
 
-                )
+            )
             .map {
                 println(it)
                 it

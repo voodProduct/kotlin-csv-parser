@@ -13,13 +13,14 @@ class ReaderCsvImpl : IReaderCsv {
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
+        mapHeaderWithIndex: Map<String, Int>,
     ): Flow<T> {
         val processDataFlow: Flow<T> = stringFlow
             .flowOn(dispatcher)
             .filterNot { it.isBlank() || it.replace(delimiter, "").isBlank() }
             .transform { string ->
                 val list = string.split(delimiter)
-                entity.toEntity(list)
+                entity.toEntity(list, mapHeaderWithIndex)
                     .onLeft { err ->
                         println(err.message)
 //                        entity.logger.error(err.message)

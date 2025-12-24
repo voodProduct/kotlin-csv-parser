@@ -5,17 +5,19 @@ import arrow.core.right
 
 class ClientEntityTemplateTest(
     override val header: String,
-    override val delimiter: String,
-    headerWithIndex: Map<String, Int>
-) : CsvEntityTemplate<ClientEntityCsv>(headerWithIndex) {
+    override val delimiter: String
+) : CsvEntityTemplate<ClientEntityCsv>() {
 
-    override fun toEntity(strValues: List<String>): Either<Throwable, ClientEntityCsv> {
+    override fun toEntity(
+        strValues: List<String>,
+        headerWithIndex: Map<String, Int>
+    ): Either<Throwable, ClientEntityCsv> {
 
         val prepareConvert = prepareConvert(
             headerWithIndex,
             strValues,
             ClientFieldsEnum.NAME::getString,
-                    ClientFieldsEnum.AGE::getLong
+            ClientFieldsEnum.AGE::getLong
         )
 
         if (prepareConvert.isNotEmpty())
@@ -26,4 +28,6 @@ class ClientEntityTemplateTest(
             age = ClientFieldsEnum.AGE.getLong(headerWithIndex, strValues)
         ).right()
     }
+
+
 }
