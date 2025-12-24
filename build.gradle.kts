@@ -34,6 +34,9 @@ dependencies {
     api("io.arrow-kt:arrow-optics")
     ksp("io.arrow-kt:arrow-optics-ksp-plugin:$arrowVersion")
 
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.10.2"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
+
 //    implementation("org.springframework.boot:spring-boot-starter-web")
 //    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
