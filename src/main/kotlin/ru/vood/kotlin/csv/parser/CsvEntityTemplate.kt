@@ -7,7 +7,7 @@ import arrow.core.Either
  */
 abstract class CsvEntityTemplate<T : ICSVLine>(
 ) {
-    abstract fun toEntity(strValues: List<String>, headerWithIndex: Map<String, Int>): Either<Throwable, T>
+    abstract fun toEntity(strValues: List<String>, headerWithIndex: ParsedHeader): Either<Throwable, T>
 
     abstract val header: String
     abstract val delimiter: String
@@ -19,19 +19,19 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
 
 
     fun prepareConvert(
-        mapHeaderWithIndex: Map<String, Int>,
+        mapHeaderWithIndex: ParsedHeader,
         strValues: List<String>,
         vararg body: (mapHeaderWithIndex: Map<String, Int>, strValues: List<String>) -> Any?
     ): List<String> {
         return buildList {
             body.forEach {
                 runCatching {
-                    it.invoke(mapHeaderWithIndex, strValues)
+                    it.invoke(mapHeaderWithIndex.headerWithIndex, strValues)
                 }.getOrElse { err ->
                     err.message?.let { msg ->
                         add(
                             "Заголовок c колонками и их порядковыми номерами: ${
-                                mapHeaderWithIndex.map { "${it.key} -> ${it.value}" }.joinToString(delimiter)
+                                mapHeaderWithIndex.headerWithIndex.map { "${it.key} -> ${it.value}" }.joinToString(delimiter)
                             }"
                         )
                         add("Содержимое строки: ${strValues.joinToString(delimiter)}")

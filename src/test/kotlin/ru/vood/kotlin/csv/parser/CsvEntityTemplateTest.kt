@@ -23,9 +23,8 @@ class CsvEntityTemplateTest : FunSpec({
                 entity = ClientEntityTemplateTest(
                     header = headerTest,
                     delimiter = ";",
-                    ),
+                ),
                 mapHeaderWithIndex = parseHeader
-
             )
             .map {
                 println(it)
@@ -35,7 +34,7 @@ class CsvEntityTemplateTest : FunSpec({
 
         println(toList)
 
-        toList.size shouldBe count
+        toList.size shouldBe count-1
 
         /*
                 infiniteFlowClient()
@@ -54,7 +53,7 @@ class CsvEntityTemplateTest : FunSpec({
 
             return flow {
                 var counter = 0
-//            emit(value)
+                emit(headerTest)
                 while (true) {
                     emit("name_${counter};${counter}")
                     counter++

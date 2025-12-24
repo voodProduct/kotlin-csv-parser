@@ -7,6 +7,6 @@ interface IReaderCsv {
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
-        mapHeaderWithIndex: Map<String, Int>,
+        mapHeaderWithIndex: ParsedHeader,
     ): Flow<T>
 }

@@ -10,7 +10,7 @@ class ClientEntityTemplateTest(
 
     override fun toEntity(
         strValues: List<String>,
-        headerWithIndex: Map<String, Int>
+        headerWithIndex: ParsedHeader
     ): Either<Throwable, ClientEntityCsv> {
 
         val prepareConvert = prepareConvert(
@@ -24,8 +24,8 @@ class ClientEntityTemplateTest(
             return Either.Left(IllegalStateException(prepareConvert.joinToString(separator = "\n")))
 
         return ClientEntityCsv(
-            name = ClientFieldsEnum.NAME.getString(headerWithIndex, strValues),
-            age = ClientFieldsEnum.AGE.getLong(headerWithIndex, strValues)
+            name = ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues),
+            age = ClientFieldsEnum.AGE.getLong(headerWithIndex.headerWithIndex, strValues)
         ).right()
     }
 
