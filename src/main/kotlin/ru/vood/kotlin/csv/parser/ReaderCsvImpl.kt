@@ -21,6 +21,7 @@ class ReaderCsvImpl : IReaderCsv {
                 val list = string.split(delimiter)
                 entity.toEntity(list)
                     .onLeft { err ->
+                        println(err.message)
 //                        entity.logger.error(err.message)
                     }
                     .onRight { emit(it) }
