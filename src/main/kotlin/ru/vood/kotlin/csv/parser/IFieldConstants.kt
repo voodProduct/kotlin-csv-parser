@@ -1,6 +1,9 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import ru.vood.kotlin.csv.parser.error.CsvFieldError
 import ru.vood.kotlin.csv.parser.error.ICsvError
 import java.time.Instant
 import java.time.LocalDate
@@ -13,17 +16,19 @@ interface IFieldConstants {
 
     val fieldName: String
 
-    fun getByte(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: List<String>
-    ): Byte =
-        convert<Byte>(this, mapHeaderWithIndex, strValues)
-
+    @Deprecated("удалить позже")
     fun getShort(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
     ): Short =
         convert<Short>(this, mapHeaderWithIndex, strValues)
+
+    fun getShortEither(
+        mapHeaderWithIndex: Map<String, Int>,
+        strValues: List<String>
+    ): Either<ICsvError, Short> =
+        convertEither<Short>(this, mapHeaderWithIndex, strValues)
+
 
     fun getInt(
         mapHeaderWithIndex: Map<String, Int>,
@@ -147,7 +152,7 @@ interface IFieldConstants {
     ): LocalDate? =
         convert<LocalDate?>(this, mapHeaderWithIndex, strValues)
 
-
+    @Deprecated("удалить позже")
     private inline fun <reified T> convert(
         field: IFieldConstants,
         mapHeaderWithIndex: Map<String, Int>,
@@ -172,8 +177,17 @@ interface IFieldConstants {
     ): Either<ICsvError, T> {
         val key = field.fieldName.lowercase()
         val convertEither = ReaderCsvConverter.convertEither<T>(
-            strValues[mapHeaderWithIndex.getValue(key)]
+            strValues[mapHeaderWithIndex.getValue(key)],
         )
-        return convertEither
+
+        val fold = convertEither.fold({
+            CsvFieldError(field, it).left()
+        }, {
+            it.right()
+        }
+        )
+
+        return fold
+
     }
 }

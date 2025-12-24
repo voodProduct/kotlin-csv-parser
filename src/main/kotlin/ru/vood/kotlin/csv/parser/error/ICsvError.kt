@@ -1,18 +1,28 @@
 package ru.vood.kotlin.csv.parser.error
 
+import ru.vood.kotlin.csv.parser.IFieldConstants
 import kotlin.reflect.KClass
 
 sealed interface ICsvError
 
+data class CsvFieldError(
+    val fieldName: IFieldConstants,
+    val error: ICastError
+) : ICsvError
+
+sealed interface ICastError
+
 data class CastError(
     val errorClass: KClass<out Throwable>,
     val errorMsg: String
-) : ICsvError
+) : ICastError
 
 data class UnsupportedClassError(
     val errorMsg: String
-) : ICsvError
+) : ICastError
 
 data class UnsupportedBooleanValueError(
     val errorMsg: String
-) : ICsvError
+) : ICastError
+
+
