@@ -10,6 +10,9 @@ class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
         headerWithIndex: ParsedHeader
     ): Either<Throwable, ClientEntityCsv> {
 
+
+
+
         val prepareConvert = prepareConvert(
             headerWithIndex,
             strValues,

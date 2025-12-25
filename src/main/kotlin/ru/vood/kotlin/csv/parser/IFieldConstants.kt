@@ -30,11 +30,20 @@ interface IFieldConstants {
         convertEither<Short>(this, mapHeaderWithIndex, strValues)
 
 
+    @Deprecated("удалить позже")
     fun getInt(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
     ): Int =
         convert<Int>(this, mapHeaderWithIndex, strValues)
+
+
+    fun getIntEither(
+        mapHeaderWithIndex: Map<String, Int>,
+        strValues: List<String>
+    ): Either<ICsvError, Int> =
+        convertEither<Int>(this, mapHeaderWithIndex, strValues)
+
 
     fun getLong(
         mapHeaderWithIndex: Map<String, Int>,
