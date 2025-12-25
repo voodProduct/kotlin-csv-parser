@@ -176,18 +176,14 @@ interface IFieldConstants {
         strValues: List<String>
     ): Either<ICsvError, T> {
         val key = field.fieldName.lowercase()
-        val convertEither = ReaderCsvConverter.convertEither<T>(
+        return ReaderCsvConverter.convertEither<T>(
             strValues[mapHeaderWithIndex.getValue(key)],
-        )
-
-        val fold = convertEither.fold({
+        ).fold({
             CsvFieldError(field, it).left()
         }, {
             it.right()
         }
         )
-
-        return fold
 
     }
 }
