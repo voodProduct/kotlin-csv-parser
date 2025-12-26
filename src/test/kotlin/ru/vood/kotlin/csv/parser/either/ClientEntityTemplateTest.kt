@@ -2,20 +2,15 @@ package ru.vood.kotlin.csv.parser.either
 
 import arrow.core.Either
 import arrow.core.NonEmptyList
-import arrow.core.left
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import ru.vood.kotlin.csv.parser.CsvEntityTemplate
 import ru.vood.kotlin.csv.parser.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ICsvError
-import ru.vood.kotlin.csv.parser.error.ILineError
-import ru.vood.kotlin.csv.parser.error.LineDtoCreateError
-import ru.vood.kotlin.csv.parser.error.LineParseError
 
 class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
 
-
-     override fun either(
+    override fun either(
         headerWithIndex: ParsedHeader,
         strValues: List<String>
     ): Either<NonEmptyList<ICsvError>, ClientEntityCsv> = either {

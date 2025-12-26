@@ -24,30 +24,30 @@ abstract class CsvEntityTemplate<T : ICSVLine>() {
         headerWithIndex: ParsedHeader
     ): Either<ILineError, T> = Either
         .catch {
-        either(headerWithIndex, strValues)
-    }.fold(
-        {
-            val left: Either<LineDtoCreateError, T> = LineDtoCreateError(
-                lineIndex = lineIndex,
-                strValues = strValues,
-                headerWithIndex = headerWithIndex,
-                errorClass = it::class,
-                errorMsg = it.message
-            ).left()
-            left
-        },
-        {
-            val mapLeft = it.mapLeft {
-                LineParseError(
+            either(headerWithIndex, strValues)
+        }.fold(
+            {
+                val left: Either<LineDtoCreateError, T> = LineDtoCreateError(
                     lineIndex = lineIndex,
-                    errors = it,
                     strValues = strValues,
-                    headerWithIndex = headerWithIndex
-                )
+                    headerWithIndex = headerWithIndex,
+                    errorClass = it::class,
+                    errorMsg = it.message
+                ).left()
+                left
+            },
+            {
+                val mapLeft = it.mapLeft {
+                    LineParseError(
+                        lineIndex = lineIndex,
+                        errors = it,
+                        strValues = strValues,
+                        headerWithIndex = headerWithIndex
+                    )
+                }
+                mapLeft
             }
-            mapLeft
-        }
-    )
+        )
 
 
     private companion object
