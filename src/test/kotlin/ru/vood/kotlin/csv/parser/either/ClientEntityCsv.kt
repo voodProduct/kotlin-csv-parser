@@ -7,4 +7,8 @@ data class ClientEntityCsv2(
     val age1: Int,
     val age2: Int,
     val age3: Int,
-): ICSVLine
+): ICSVLine{
+    init {
+        require(age1<1){"age1 must be less than 1"}
+    }
+}

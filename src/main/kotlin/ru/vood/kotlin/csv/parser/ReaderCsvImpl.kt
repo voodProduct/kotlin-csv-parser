@@ -6,7 +6,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
-import ru.vood.kotlin.csv.parser.error.LineError
+import ru.vood.kotlin.csv.parser.error.ILineError
+import ru.vood.kotlin.csv.parser.error.LineParseError
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -54,7 +55,7 @@ class ReaderCsvImpl(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
-    ): Flow<Either<LineError, T>> {
+    ): Flow<Either<ILineError, T>> {
         val parsedHeader = AtomicReference<ParsedHeader?>(null)
         val processDataFlow = stringFlow
             .withIndex()
@@ -63,7 +64,7 @@ class ReaderCsvImpl(
             .transform { string ->
                 if (parsedHeader.load() != null) {
                     val list = string.value.split(delimiter)
-                    val toEntityEither: Either<LineError, T> = entity.toEntityEither(
+                    val toEntityEither: Either<ILineError, T> = entity.toEntityEither(
                         strValues = list,
                         string.index + 1,
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")

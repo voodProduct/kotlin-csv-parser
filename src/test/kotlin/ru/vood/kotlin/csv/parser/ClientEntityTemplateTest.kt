@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import arrow.core.right
-import ru.vood.kotlin.csv.parser.error.LineError
+import ru.vood.kotlin.csv.parser.error.LineParseError
 
 class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
 
@@ -33,7 +33,7 @@ class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
         strValues: List<String>,
         lineIndex: Int,
         headerWithIndex: ParsedHeader
-    ): Either<LineError, ClientEntityCsv> {
+    ): Either<LineParseError, ClientEntityCsv> {
 
         val d = either {
             zipOrAccumulate(

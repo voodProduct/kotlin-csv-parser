@@ -13,8 +13,9 @@ class CsvEntityTemplateTest : FunSpec({
 
     test("header") {
 
+//        val count = 500_000
         val count = 3
-        println(infiniteFlowClient().take(count).toList())
+//        println(infiniteFlowClient().take(count).toList())
 
         val toList = readerCsvImpl
             .readCSVEither(
@@ -28,7 +29,7 @@ class CsvEntityTemplateTest : FunSpec({
             }
             .toList()
 
-        println(toList)
+//        println(toList)
 
         toList.size shouldBe count - 1
 
@@ -51,7 +52,8 @@ class CsvEntityTemplateTest : FunSpec({
                 var counter = 0
                 emit(headerTest)
                 while (true) {
-                    emit("name_${counter};${counter}q;${counter+1}q;${counter+2}q;")
+//                    emit("name_${counter};${counter}q;${counter+1}q;${counter+2}q")
+                    emit("name_${counter};${counter};${counter+1};${counter+2}")
                     counter++
                 }
             }
