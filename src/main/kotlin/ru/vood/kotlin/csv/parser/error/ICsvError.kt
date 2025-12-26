@@ -27,7 +27,7 @@ data class UnsupportedBooleanValueError(
     val errorMsg: String
 ) : ICastError
 
-sealed interface ILineError{
+sealed interface ILineError {
     val lineIndex: Int
     val strValues: List<String>
     val headerWithIndex: ParsedHeader
@@ -39,11 +39,11 @@ data class LineDtoCreateError(
     override val headerWithIndex: ParsedHeader,
     val errorClass: KClass<out Throwable>,
     val errorMsg: String?
-): ILineError
+) : ILineError
 
 data class LineParseError(
     override val lineIndex: Int,
     val errors: NonEmptyList<ICsvError>,
     override val strValues: List<String>,
     override val headerWithIndex: ParsedHeader
-):ILineError
+) : ILineError

@@ -5,7 +5,6 @@ import arrow.core.left
 import arrow.core.right
 import ru.vood.kotlin.csv.parser.error.CastError
 import ru.vood.kotlin.csv.parser.error.ICastError
-import ru.vood.kotlin.csv.parser.error.ICsvError
 import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
 import ru.vood.kotlin.csv.parser.error.UnsupportedClassError
 import java.time.LocalDate

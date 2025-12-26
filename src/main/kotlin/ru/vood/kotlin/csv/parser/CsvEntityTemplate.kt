@@ -2,7 +2,6 @@ package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
 import ru.vood.kotlin.csv.parser.error.ILineError
-import ru.vood.kotlin.csv.parser.error.LineParseError
 
 /**
  * Базовый класс для шаблоннов маппинга при получении сущности из строки csv файла
