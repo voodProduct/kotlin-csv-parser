@@ -28,7 +28,7 @@ class ReaderCsvImpl(
             .transform { string ->
                 if (parsedHeader.load() != null) {
                     val list = string.value.split(delimiter)
-                    val toEntityEither: Either<ILineError, T> = entity.toEntityEither(
+                    val toEntityEither: Either<ILineError, T> = entity.toEntity(
                         strValues = list,
                         string.index + 1,
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
