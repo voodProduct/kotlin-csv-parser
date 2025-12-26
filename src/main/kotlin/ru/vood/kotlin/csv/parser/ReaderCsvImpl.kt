@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
+import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ILineError
 import kotlin.concurrent.atomics.AtomicReference
@@ -28,7 +29,7 @@ class ReaderCsvImpl(
             .filterNot { it.value.isBlank() || it.value.replace(delimiter, "").isBlank() }
             .transform { string ->
                 if (parsedHeader.load() != null) {
-                    val list = string.value.split(delimiter)
+                    val list = NotParsedCsvLine(string.value.split(delimiter))
                     val toEntityEither: Either<ILineError, T> = entity.toEntity(
                         strValues = list,
                         string.index + 1,

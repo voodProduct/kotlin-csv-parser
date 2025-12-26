@@ -5,6 +5,7 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import ru.vood.kotlin.csv.parser.CsvEntityTemplate
+import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ICsvError
 
@@ -12,7 +13,7 @@ class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
 
     override fun either(
         headerWithIndex: ParsedHeader,
-        strValues: List<String>
+        strValues: NotParsedCsvLine
     ): Either<NonEmptyList<ICsvError>, ClientEntityCsv> = either {
         zipOrAccumulate(
             { ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues).bind() },
