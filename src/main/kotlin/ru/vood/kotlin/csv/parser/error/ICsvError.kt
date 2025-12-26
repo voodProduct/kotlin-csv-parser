@@ -15,9 +15,15 @@ data class CsvFieldError(
 
 sealed interface ICastError
 
+data class EnumCastError<E: Enum<E>>(
+    val errorClass: KClass<out Throwable>,
+    val errorMsg: String?,
+    val klass: KClass<E>
+) : ICastError
+
 data class CastError(
     val errorClass: KClass<out Throwable>,
-    val errorMsg: String
+    val errorMsg: String?
 ) : ICastError
 
 data class UnsupportedClassError(

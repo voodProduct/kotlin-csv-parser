@@ -34,14 +34,14 @@ class CsvEntityTemplateTest : FunSpec({
 }) {
 
     companion object {
-        val headerTest = "name;age1;age2;age3"
+        val headerTest = "name;age1;age2;age3;eyeColourEnum"
         fun infiniteFlowClient(): Flow<String> {
 
             return flow {
                 var counter = 0
                 emit(headerTest)
                 while (true) {
-                    emit("name_${counter};${counter};${counter + 1};${counter + 2}")
+                    emit("name_${counter};${counter};${counter + 1};${counter + 2};GREEN")
                     counter++
                 }
             }

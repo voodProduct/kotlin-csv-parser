@@ -6,6 +6,7 @@ import arrow.core.right
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.CsvFieldError
+import ru.vood.kotlin.csv.parser.error.EnumCastError
 import ru.vood.kotlin.csv.parser.error.ICsvError
 import java.time.Instant
 import java.time.LocalDate
@@ -17,6 +18,7 @@ import java.time.LocalDateTime
 interface IFieldConstants {
 
     val fieldName: String
+
 
     context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
     fun getShort(): Either<ICsvError, Short> =
@@ -106,19 +108,32 @@ interface IFieldConstants {
     fun getLocalDateNullable(): Either<ICsvError, LocalDate?> =
         convert<LocalDate?>(this)
 
-    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-    private inline fun <reified T> convert(
-        field: IFieldConstants,
-    ): Either<ICsvError, T> {
-        val key = field.fieldName.lowercase()
-        return ReaderCsvConverter.convertEither<T>(
-            notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)],
-        ).fold({
-            CsvFieldError(field, it).left()
-        }, {
-            it.right()
-        }
-        )
+}
 
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+ inline fun <reified T> IFieldConstants.convert(
+    field: IFieldConstants,
+): Either<ICsvError, T> {
+    val key = field.fieldName.lowercase()
+    return ReaderCsvConverter.convertEither<T>(
+        notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)],
+    ).fold({
+        CsvFieldError(field, it).left()
+    }, {
+        it.right()
     }
+    )
+
+}
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified E: Enum<E>> IFieldConstants.getEnum(convert: (String) -> E): Either<ICsvError, E> {
+    val key = this.fieldName.lowercase()
+    val catch = Either.catch { convert(notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)]) }
+        .mapLeft {
+            CsvFieldError(this, EnumCastError(it::class, it.message, E::class))
+
+        }
+    return catch
+
 }

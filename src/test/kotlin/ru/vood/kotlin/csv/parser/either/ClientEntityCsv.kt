@@ -7,8 +7,13 @@ data class ClientEntityCsv(
     val age1: Int,
     val age2: Int,
     val age3: Int,
+    val eyeColourEnum: EyeColourEnum
 ) : ICSVLine {
     init {
         require(age1 < 1) { "age1 must be less than 1" }
     }
+}
+
+enum class EyeColourEnum{
+    RED, GREEN, BLUE
 }

@@ -9,6 +9,7 @@ import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.either.ClientFieldsEnum.*
 import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.getEnum
 
 class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
 
@@ -21,8 +22,9 @@ class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
             { NAME.getString().bind() },
             { AGE1.getInt().bind() },
             { AGE2.getInt().bind() },
-            { AGE3.getInt().bind() }
-        ) { q1, q2, q3, q4 -> ClientEntityCsv(q1, q2, q3, q4) }
+            { AGE3.getInt().bind() },
+            { EyeColour.getEnum<EyeColourEnum> { EyeColourEnum.valueOf(it) }.bind() }
+        ) { q1, q2, q3, q4, q5 -> ClientEntityCsv(q1, q2, q3, q4, q5) }
     }
 
 
