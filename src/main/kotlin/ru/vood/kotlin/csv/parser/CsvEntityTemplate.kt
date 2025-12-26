@@ -15,7 +15,8 @@ import ru.vood.kotlin.csv.parser.error.LineParseError
  */
 abstract class CsvEntityTemplate<T : ICSVLine>() {
 
-    protected abstract fun either(
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    protected abstract fun parseLine(
         headerWithIndex: ParsedHeader,
         strValues: NotParsedCsvLine
     ): Either<NonEmptyList<ICsvError>, T>
@@ -26,7 +27,11 @@ abstract class CsvEntityTemplate<T : ICSVLine>() {
         headerWithIndex: ParsedHeader
     ): Either<ILineError, T> = Either
         .catch {
-            either(headerWithIndex, strValues)
+            with(strValues) {
+                with(headerWithIndex) {
+                    parseLine(headerWithIndex, strValues)
+                }
+            }
         }.fold(
             {
                 val left: Either<LineDtoCreateError, T> = LineDtoCreateError(

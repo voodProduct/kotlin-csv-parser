@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
+import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.CsvFieldError
 import ru.vood.kotlin.csv.parser.error.ICsvError
 import java.time.Instant
@@ -17,143 +18,101 @@ interface IFieldConstants {
 
     val fieldName: String
 
-    fun getShort(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Short> =
-        convert<Short>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getShort(): Either<ICsvError, Short> =
+        convert<Short>(this)
 
-    fun getInt(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Int> =
-        convert<Int>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getInt(): Either<ICsvError, Int> =
+        convert<Int>(this)
 
 
-    fun getLong(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Long> =
-        convert<Long>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLong(): Either<ICsvError, Long> =
+        convert<Long>(this)
 
-    fun getFloat(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Float> =
-        convert<Float>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getFloat(): Either<ICsvError, Float> =
+        convert<Float>(this)
 
-    fun getDouble(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Double> =
-        convert<Double>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getDouble(): Either<ICsvError, Double> =
+        convert<Double>(this)
 
-    fun getBoolean(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Boolean> =
-        convert<Boolean>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getBoolean(): Either<ICsvError, Boolean> =
+        convert<Boolean>(this)
 
-    fun getString(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, String> =
-        convert<String>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getString(): Either<ICsvError, String> =
+        convert<String>(this)
 
-    fun getInstant(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Instant> =
-        convert<Instant>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getInstant(): Either<ICsvError, Instant> =
+        convert<Instant>(this)
 
-    fun getLocalDateTime(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, LocalDateTime> =
-        convert<LocalDateTime>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLocalDateTime(): Either<ICsvError, LocalDateTime> =
+        convert<LocalDateTime>(this)
 
-    fun getLocalDate(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, LocalDate> =
-        convert<LocalDate>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLocalDate(): Either<ICsvError, LocalDate> =
+        convert<LocalDate>(this)
 
-    fun getByteNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Byte?> =
-        convert<Byte?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getByteNullable(): Either<ICsvError, Byte?> =
+        convert<Byte?>(this)
 
-    fun getShortNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Short?> =
-        convert<Short?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getShortNullable(): Either<ICsvError, Short?> =
+        convert<Short?>(this)
 
-    fun getIntNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Int?> =
-        convert<Int?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getIntNullable(): Either<ICsvError, Int?> =
+        convert<Int?>(this)
 
-    fun getLongNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Long?> =
-        convert<Long?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLongNullable(): Either<ICsvError, Long?> =
+        convert<Long?>(this)
 
-    fun getFloatNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Float?> =
-        convert<Float?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getFloatNullable(): Either<ICsvError, Float?> =
+        convert<Float?>(this)
 
-    fun getDoubleNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Double?> =
-        convert<Double?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getDoubleNullable(): Either<ICsvError, Double?> =
+        convert<Double?>(this)
 
-    fun getBooleanNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Boolean?> =
-        convert<Boolean?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getBooleanNullable(): Either<ICsvError, Boolean?> =
+        convert<Boolean?>(this)
 
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
     fun getStringNullable(block: () -> String?): String? = block()
 
-    fun getStringNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, String?> =
-        convert<String?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getStringNullable(): Either<ICsvError, String?> =
+        convert<String?>(this)
 
-    fun getInstantNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, Instant?> =
-        convert<Instant?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getInstantNullable(): Either<ICsvError, Instant?> =
+        convert<Instant?>(this)
 
-    fun getLocalDateTimeNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, LocalDateTime?> =
-        convert<LocalDateTime?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLocalDateTimeNullable(): Either<ICsvError, LocalDateTime?> =
+        convert<LocalDateTime?>(this)
 
-    fun getLocalDateNullable(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
-    ): Either<ICsvError, LocalDate?> =
-        convert<LocalDate?>(this, mapHeaderWithIndex, strValues)
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+    fun getLocalDateNullable(): Either<ICsvError, LocalDate?> =
+        convert<LocalDate?>(this)
 
+    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
     private inline fun <reified T> convert(
         field: IFieldConstants,
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: NotParsedCsvLine
     ): Either<ICsvError, T> {
         val key = field.fieldName.lowercase()
         return ReaderCsvConverter.convertEither<T>(
-            strValues.strValues[mapHeaderWithIndex.getValue(key)],
+            notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)],
         ).fold({
             CsvFieldError(field, it).left()
         }, {
