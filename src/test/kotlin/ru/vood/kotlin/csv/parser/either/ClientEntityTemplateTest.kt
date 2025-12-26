@@ -10,12 +10,12 @@ import ru.vood.kotlin.csv.parser.error.ILineError
 import ru.vood.kotlin.csv.parser.error.LineDtoCreateError
 import ru.vood.kotlin.csv.parser.error.LineParseError
 
-class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv2>() {
+class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
 
     override fun toEntity(
         strValues: List<String>,
         headerWithIndex: ParsedHeader
-    ): Either<Throwable, ClientEntityCsv2> {
+    ): Either<Throwable, ClientEntityCsv> {
         TODO()
     }
 
@@ -23,21 +23,21 @@ class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv2>() {
         strValues: List<String>,
         lineIndex: Int,
         headerWithIndex: ParsedHeader
-    ): Either<ILineError, ClientEntityCsv2> {
+    ): Either<ILineError, ClientEntityCsv> {
 
 
-        val mapLeft: Either<ILineError, ClientEntityCsv2> = Either.catch {
+        val mapLeft: Either<ILineError, ClientEntityCsv> = Either.catch {
             either {
                 zipOrAccumulate(
-                    { ClientFieldsEnum2.NAME.getString(headerWithIndex.headerWithIndex, strValues) },
-                    { ClientFieldsEnum2.AGE1.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
-                    { ClientFieldsEnum2.AGE2.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
-                    { ClientFieldsEnum2.AGE3.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() }
-                ) { q1, q2, q3, q4 -> ClientEntityCsv2(q1, q2, q3, q4) }
+                    { ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues) },
+                    { ClientFieldsEnum.AGE1.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
+                    { ClientFieldsEnum.AGE2.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
+                    { ClientFieldsEnum.AGE3.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() }
+                ) { q1, q2, q3, q4 -> ClientEntityCsv(q1, q2, q3, q4) }
             }
         }.fold(
             {
-                val left: Either<LineDtoCreateError, ClientEntityCsv2> = LineDtoCreateError(
+                val left: Either<LineDtoCreateError, ClientEntityCsv> = LineDtoCreateError(
                     lineIndex = lineIndex,
                     strValues = strValues,
                     headerWithIndex = headerWithIndex,

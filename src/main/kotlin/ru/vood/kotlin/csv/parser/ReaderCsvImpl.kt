@@ -15,42 +15,7 @@ class ReaderCsvImpl(
 ) : IReaderCsv {
 
     @OptIn(ExperimentalAtomicApi::class)
-    @Deprecated("удалить")
-    override fun <T : ICSVLine> readCSV(
-        stringFlow: Flow<String>,
-        delimiter: String,
-        entity: CsvEntityTemplate<T>,
-    ): Flow<T> {
-        val parsedHeader = AtomicReference<ParsedHeader?>(null)
-        val processDataFlow = stringFlow
-            .withIndex()
-            .flowOn(dispatcher)
-            .filterNot { str -> str.value.isBlank() || str.value.replace(delimiter, "").isBlank() }
-            .transform { string ->
-                if (parsedHeader.load() != null) {
-                    val list = string.value.split(delimiter)
-                    entity.toEntity(
-                        strValues = list,
-                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
-                    )
-                        .onLeft { err ->
-                            println(err.message)
-//                        entity.logger.error(err.message)
-                        }
-                        .onRight {
-                            this.emit(it)
-                        }
-                } else {
-                    parsedHeader.exchange(parseHeader(header = string.value, delimiter = delimiter))
-
-                }
-            }
-
-        return processDataFlow
-    }
-
-    @OptIn(ExperimentalAtomicApi::class)
-    fun <T : ICSVLine> readCSVEither(
+    override fun <T : ICSVLine> readCSVEither(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
