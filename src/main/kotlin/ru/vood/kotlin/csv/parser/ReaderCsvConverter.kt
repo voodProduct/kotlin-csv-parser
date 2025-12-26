@@ -20,25 +20,7 @@ object ReaderCsvConverter {
         "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'" to LocalDateTime::class,
     )
 
-    @Deprecated("удалить позже")
-    inline fun <reified T> convert(fieldValue: String): T {
-        if (fieldValue == "" || fieldValue == "NULL") return null as T
-        return when (T::class) {
-            Byte::class -> fieldValue.toByte() as T
-            Short::class -> fieldValue.toShort() as T
-            Int::class -> fieldValue.toInt() as T
-            Long::class -> fieldValue.toLong() as T
-            Float::class -> fieldValue.toFloat() as T
-            Double::class -> fieldValue.toDouble() as T
-            Boolean::class -> fieldValue.toBoolean() as T
-            String::class -> fieldValue as T
-            LocalDateTime::class -> fieldValue.toLocalDateTime() as T
-            LocalDate::class -> fieldValue.toLocalDateTime().toLocalDate() as T
-            else -> throw IllegalStateException("Unknown Generic Type")
-        }
-    }
-
-    //    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified T> convertEither(fieldValue: String): Either<ICastError, T> {
         if (fieldValue == "" || fieldValue == "NULL") return (null as T).right()
         val either = when (T::class) {

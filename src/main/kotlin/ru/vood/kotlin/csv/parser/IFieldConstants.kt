@@ -16,29 +16,13 @@ interface IFieldConstants {
 
     val fieldName: String
 
-    @Deprecated("удалить позже")
     fun getShort(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: List<String>
-    ): Short =
-        convert<Short>(this, mapHeaderWithIndex, strValues)
-
-    fun getShortEither(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
     ): Either<ICsvError, Short> =
         convertEither<Short>(this, mapHeaderWithIndex, strValues)
 
-
-    @Deprecated("удалить позже")
     fun getInt(
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: List<String>
-    ): Int =
-        convert<Int>(this, mapHeaderWithIndex, strValues)
-
-
-    fun getIntEither(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
     ): Either<ICsvError, Int> =
@@ -48,136 +32,118 @@ interface IFieldConstants {
     fun getLong(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Long =
-        convert<Long>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Long> =
+        convertEither<Long>(this, mapHeaderWithIndex, strValues)
 
     fun getFloat(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Float =
-        convert<Float>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Float> =
+        convertEither<Float>(this, mapHeaderWithIndex, strValues)
 
     fun getDouble(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Double =
-        convert<Double>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Double> =
+        convertEither<Double>(this, mapHeaderWithIndex, strValues)
 
     fun getBoolean(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Boolean =
-        convert<Boolean>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Boolean> =
+        convertEither<Boolean>(this, mapHeaderWithIndex, strValues)
 
     fun getString(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): String =
-        convert<String>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, String> =
+        convertEither<String>(this, mapHeaderWithIndex, strValues)
 
     fun getInstant(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Instant =
-        convert<Instant>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Instant> =
+        convertEither<Instant>(this, mapHeaderWithIndex, strValues)
 
     fun getLocalDateTime(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): LocalDateTime =
-        convert<LocalDateTime>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, LocalDateTime> =
+        convertEither<LocalDateTime>(this, mapHeaderWithIndex, strValues)
 
     fun getLocalDate(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): LocalDate =
-        convert<LocalDate>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, LocalDate> =
+        convertEither<LocalDate>(this, mapHeaderWithIndex, strValues)
 
     fun getByteNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Byte? =
-        convert<Byte?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Byte?> =
+        convertEither<Byte?>(this, mapHeaderWithIndex, strValues)
 
     fun getShortNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Short? =
-        convert<Short?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Short?> =
+        convertEither<Short?>(this, mapHeaderWithIndex, strValues)
 
     fun getIntNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Int? =
-        convert<Int?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Int?> =
+        convertEither<Int?>(this, mapHeaderWithIndex, strValues)
 
     fun getLongNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Long? =
-        convert<Long?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Long?> =
+        convertEither<Long?>(this, mapHeaderWithIndex, strValues)
 
     fun getFloatNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Float? =
-        convert<Float?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Float?> =
+        convertEither<Float?>(this, mapHeaderWithIndex, strValues)
 
     fun getDoubleNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Double? =
-        convert<Double?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Double?> =
+        convertEither<Double?>(this, mapHeaderWithIndex, strValues)
 
     fun getBooleanNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Boolean? =
-        convert<Boolean?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Boolean?> =
+        convertEither<Boolean?>(this, mapHeaderWithIndex, strValues)
 
     fun getStringNullable(block: () -> String?): String? = block()
 
     fun getStringNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): String? =
-        convert<String?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, String?> =
+        convertEither<String?>(this, mapHeaderWithIndex, strValues)
 
     fun getInstantNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): Instant? =
-        convert<Instant?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, Instant?> =
+        convertEither<Instant?>(this, mapHeaderWithIndex, strValues)
 
     fun getLocalDateTimeNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): LocalDateTime? =
-        convert<LocalDateTime?>(this, mapHeaderWithIndex, strValues)
+    ): Either<ICsvError, LocalDateTime?> =
+        convertEither<LocalDateTime?>(this, mapHeaderWithIndex, strValues)
 
     fun getLocalDateNullable(
         mapHeaderWithIndex: Map<String, Int>,
         strValues: List<String>
-    ): LocalDate? =
-        convert<LocalDate?>(this, mapHeaderWithIndex, strValues)
-
-    @Deprecated("удалить позже")
-    private inline fun <reified T> convert(
-        field: IFieldConstants,
-        mapHeaderWithIndex: Map<String, Int>,
-        strValues: List<String>
-    ): T = runCatching {
-        val key = field.fieldName.lowercase()
-        ReaderCsvConverter.convert<T>(
-            strValues[mapHeaderWithIndex.getValue(key)]
-        )
-    }.getOrElse { err ->
-        val errorMessage = buildString {
-            append("Ошибка в процессе преобразования значения поля ${field.fieldName} в тип ${T::class.java}.\n")
-            append("Причина: ${err.message}.\n")
-        }
-        error(errorMessage)
-    }
+    ): Either<ICsvError, LocalDate?> =
+        convertEither<LocalDate?>(this, mapHeaderWithIndex, strValues)
 
     private inline fun <reified T> convertEither(
         field: IFieldConstants,

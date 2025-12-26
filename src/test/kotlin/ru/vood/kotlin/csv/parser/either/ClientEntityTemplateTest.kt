@@ -29,10 +29,10 @@ class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
         val mapLeft: Either<ILineError, ClientEntityCsv> = Either.catch {
             either {
                 zipOrAccumulate(
-                    { ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues) },
-                    { ClientFieldsEnum.AGE1.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
-                    { ClientFieldsEnum.AGE2.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() },
-                    { ClientFieldsEnum.AGE3.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() }
+                    { ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues).bind() },
+                    { ClientFieldsEnum.AGE1.getInt(headerWithIndex.headerWithIndex, strValues).bind() },
+                    { ClientFieldsEnum.AGE2.getInt(headerWithIndex.headerWithIndex, strValues).bind() },
+                    { ClientFieldsEnum.AGE3.getInt(headerWithIndex.headerWithIndex, strValues).bind() }
                 ) { q1, q2, q3, q4 -> ClientEntityCsv(q1, q2, q3, q4) }
             }
         }.fold(
