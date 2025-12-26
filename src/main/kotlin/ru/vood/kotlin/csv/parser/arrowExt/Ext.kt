@@ -13,7 +13,7 @@ import kotlin.experimental.ExperimentalTypeInference
 
 @RaiseDSL @OptIn(ExperimentalRaiseAccumulateApi::class, ExperimentalTypeInference::class, ExperimentalContracts::class)
 @Suppress("WRONG_INVOCATION_KIND")
-public inline fun <Error, A, B, C, D, E, F, G, H, I, J, K> Raise<NonEmptyList<Error>>.zipOrAccumulate(
+public inline fun <Error, A, B, C, D, E, F, G, H, I, J, K> Raise<NonEmptyList<Error>>.zipOrAccumulateMy(
     @BuilderInference action1: RaiseAccumulate<Error>.() -> A,
     @BuilderInference action2: RaiseAccumulate<Error>.() -> B,
     @BuilderInference action3: RaiseAccumulate<Error>.() -> C,

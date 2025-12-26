@@ -1,5 +1,6 @@
 package ru.vood.kotlin.csv.parser.error
 
+import arrow.core.NonEmptyList
 import ru.vood.kotlin.csv.parser.IFieldConstants
 import kotlin.reflect.KClass
 
@@ -25,4 +26,7 @@ data class UnsupportedBooleanValueError(
     val errorMsg: String
 ) : ICastError
 
-
+data class LineError(
+    val lineIndex: Int,
+    val errors: NonEmptyList<ICsvError>
+)

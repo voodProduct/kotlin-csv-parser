@@ -1,8 +1,7 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
-import arrow.core.NonEmptyList
-import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.LineError
 
 /**
  * Базовый класс для шаблоннов маппинга при получении сущности из строки csv файла
@@ -11,7 +10,12 @@ abstract class CsvEntityTemplate<T : ICSVLine>(
 ) {
     abstract fun toEntity(strValues: List<String>, headerWithIndex: ParsedHeader): Either<Throwable, T>
 
-    abstract fun toEntityEither(strValues: List<String>, headerWithIndex: ParsedHeader): Either<NonEmptyList<ICsvError>, T>
+    abstract fun toEntityEither(
+        strValues: List<String>,
+        lineIndex: Int,
+        headerWithIndex: ParsedHeader
+    ): Either<LineError, T>
+//            Either<NonEmptyList<ICsvError>, T>
 
     fun prepareConvert(
         mapHeaderWithIndex: ParsedHeader,

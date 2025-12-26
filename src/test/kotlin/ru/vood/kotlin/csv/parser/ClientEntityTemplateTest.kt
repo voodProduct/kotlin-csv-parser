@@ -1,11 +1,10 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
-import arrow.core.NonEmptyList
 import arrow.core.raise.either
+import arrow.core.raise.zipOrAccumulate
 import arrow.core.right
-import ru.vood.kotlin.csv.parser.arrowExt.zipOrAccumulate
-import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.LineError
 
 class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
 
@@ -26,37 +25,50 @@ class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
 
         return ClientEntityCsv(
             name = ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues),
-            age = ClientFieldsEnum.AGE.getLong(headerWithIndex.headerWithIndex, strValues)
+            age = ClientFieldsEnum.AGE.getInt(headerWithIndex.headerWithIndex, strValues)
         ).right()
     }
 
     override fun toEntityEither(
         strValues: List<String>,
+        lineIndex: Int,
         headerWithIndex: ParsedHeader
-    ): Either<NonEmptyList<ICsvError>, ClientEntityCsv> {
-        val either = either {
-            zipOrAccumulate<ICsvError, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int>(
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-                { 1 },
-            ) { q1, q2, q3, q4, q5, q6, q7, q8, q9, q10 ->
+    ): Either<LineError, ClientEntityCsv> {
 
-                1
-            }
+        val d = either {
+            zipOrAccumulate(
+                { ClientFieldsEnum.NAME.getString(headerWithIndex.headerWithIndex, strValues) },
+                { ClientFieldsEnum.AGE.getIntEither(headerWithIndex.headerWithIndex, strValues).bind() }
+            ) { q1, q2 -> ClientEntityCsv(q1, q2) }
+
         }
+        TODO()
+//        return d
+
+//
+//    val either = either {
+//        zipOrAccumulateMy<ICsvError, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int>(
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//            { 1 },
+//        ) { q1, q2, q3, q4, q5, q6, q7, q8, q9, q10 ->
+//
+//            1
+//        }
+//    }
 //        either {
 //            zipOrAccumulate()
 //            TODO()
 //        }
-        TODO("Not yet implemented")
-    }
+//    TODO("Not yet implemented")
+}
 
 
 }

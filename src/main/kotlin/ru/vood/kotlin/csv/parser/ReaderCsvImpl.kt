@@ -1,12 +1,18 @@
 package ru.vood.kotlin.csv.parser
 
+import arrow.core.Either
+import arrow.core.Either.Left
+import arrow.core.NonEmptyList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.withIndex
 import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
+import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.LineError
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -15,6 +21,7 @@ class ReaderCsvImpl(
 ) : IReaderCsv {
 
     @OptIn(ExperimentalAtomicApi::class)
+    @Deprecated("удалить")
     override fun <T : ICSVLine> readCSV(
         stringFlow: Flow<String>,
         delimiter: String,
@@ -22,11 +29,12 @@ class ReaderCsvImpl(
     ): Flow<T> {
         val parsedHeader = AtomicReference<ParsedHeader?>(null)
         val processDataFlow = stringFlow
+            .withIndex()
             .flowOn(dispatcher)
-            .filterNot { it.isBlank() || it.replace(delimiter, "").isBlank() }
+            .filterNot { str-> str.value.isBlank() || str.value.replace(delimiter, "").isBlank() }
             .transform { string ->
                 if (parsedHeader.load() != null) {
-                    val list = string.split(delimiter)
+                    val list = string.value.split(delimiter)
                     entity.toEntity(
                         strValues = list,
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
@@ -39,20 +47,60 @@ class ReaderCsvImpl(
                             this.emit(it)
                         }
                 } else {
-                    parsedHeader.exchange(parseHeader(header = string, delimiter = delimiter))
+                    parsedHeader.exchange(parseHeader(header = string.value, delimiter = delimiter))
 
                 }
-
-
-//                val list = string.split(delimiter)
-//                entity.toEntity(list, mapHeaderWithIndex)
-//                    .onLeft { err ->
-//                        println(err.message)
-////                        entity.logger.error(err.message)
-//                    }
-//                    .onRight { emit(it) }
             }
 
         return processDataFlow
     }
+
+    @OptIn(ExperimentalAtomicApi::class)
+     fun <T : ICSVLine> readCSVEither(
+        stringFlow: Flow<String>,
+        delimiter: String,
+        entity: CsvEntityTemplate<T>,
+    ): Flow<Either<LineError, T>> {
+        val parsedHeader = AtomicReference<ParsedHeader?>(null)
+        val processDataFlow = stringFlow
+            .withIndex()
+            .flowOn(dispatcher)
+            .filterNot { it.value.isBlank() || it.value.replace(delimiter, "").isBlank() }
+            .transform { string ->
+                if (parsedHeader.load() != null) {
+                    val list = string.value.split(delimiter)
+                    val toEntityEither: Either<LineError, T> = entity.toEntityEither(
+                        strValues = list,
+                        string.index+1,
+                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
+                    )
+                    if (toEntityEither is Left){
+                        println(toEntityEither.value)
+                    }
+                    this.emit(toEntityEither)
+
+
+//                    entity.toEntity(
+//                        strValues = list,
+//                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
+//                    )
+//
+//                        .onLeft { err ->
+//                            println(err.message)
+////                        entity.logger.error(err.message)
+//                        }
+//                        .onRight {
+//                            this.emit(it)
+//                        }
+                } else {
+                    parsedHeader.exchange(parseHeader(header = string.value, delimiter = delimiter))
+
+                }
+            }
+
+        return processDataFlow
+    }
+
+
+
 }
