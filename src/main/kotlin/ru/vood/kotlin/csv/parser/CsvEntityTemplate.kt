@@ -3,6 +3,7 @@ package ru.vood.kotlin.csv.parser
 import arrow.core.Either
 import arrow.core.NonEmptyList
 import arrow.core.left
+import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ICsvError
 import ru.vood.kotlin.csv.parser.error.ILineError
 import ru.vood.kotlin.csv.parser.error.LineDtoCreateError

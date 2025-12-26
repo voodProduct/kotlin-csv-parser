@@ -1,5 +1,7 @@
 package ru.vood.kotlin.csv.parser
 
+import ru.vood.kotlin.csv.parser.dto.ParsedHeader
+
 object HeaderUtil {
 
     fun parseHeader(header: String, delimiter: String): ParsedHeader =

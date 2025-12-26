@@ -5,7 +5,7 @@ import arrow.core.NonEmptyList
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import ru.vood.kotlin.csv.parser.CsvEntityTemplate
-import ru.vood.kotlin.csv.parser.ParsedHeader
+import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ICsvError
 
 class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {

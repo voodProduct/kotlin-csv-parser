@@ -2,7 +2,7 @@ package ru.vood.kotlin.csv.parser.error
 
 import arrow.core.NonEmptyList
 import ru.vood.kotlin.csv.parser.IFieldConstants
-import ru.vood.kotlin.csv.parser.ParsedHeader
+import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import kotlin.reflect.KClass
 
 sealed interface ICsvError
