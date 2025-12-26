@@ -68,7 +68,7 @@ class ClientEntityTemplateTest() : CsvEntityTemplate<ClientEntityCsv>() {
 //            TODO()
 //        }
 //    TODO("Not yet implemented")
-}
+    }
 
 
 }

@@ -3,7 +3,6 @@ package ru.vood.kotlin.csv.parser.either
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.*
-import ru.vood.kotlin.csv.parser.ClientEntityTemplateTest
 import ru.vood.kotlin.csv.parser.ReaderCsvImpl
 
 val readerCsvImpl = ReaderCsvImpl()
@@ -53,7 +52,7 @@ class CsvEntityTemplateTest : FunSpec({
                 emit(headerTest)
                 while (true) {
 //                    emit("name_${counter};${counter}q;${counter+1}q;${counter+2}q")
-                    emit("name_${counter};${counter};${counter+1};${counter+2}")
+                    emit("name_${counter};${counter};${counter + 1};${counter + 2}")
                     counter++
                 }
             }

@@ -57,7 +57,7 @@ class ReaderCsvConverterTest : FunSpec({
 
     test("CustomType - OK") {
         val convertEither = convertEither<SomeClass>("qwerty") { SomeClass(it) }
-        convertEither shouldBe SomeClass(value="qwerty").right()
+        convertEither shouldBe SomeClass(value = "qwerty").right()
     }
 
     test("Boolean - error") {
