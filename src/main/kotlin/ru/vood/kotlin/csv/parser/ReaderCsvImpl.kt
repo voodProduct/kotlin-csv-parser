@@ -2,16 +2,10 @@ package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
 import arrow.core.Either.Left
-import arrow.core.NonEmptyList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.flow.withIndex
+import kotlinx.coroutines.flow.*
 import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
-import ru.vood.kotlin.csv.parser.error.ICsvError
 import ru.vood.kotlin.csv.parser.error.LineError
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -31,7 +25,7 @@ class ReaderCsvImpl(
         val processDataFlow = stringFlow
             .withIndex()
             .flowOn(dispatcher)
-            .filterNot { str-> str.value.isBlank() || str.value.replace(delimiter, "").isBlank() }
+            .filterNot { str -> str.value.isBlank() || str.value.replace(delimiter, "").isBlank() }
             .transform { string ->
                 if (parsedHeader.load() != null) {
                     val list = string.value.split(delimiter)
@@ -56,7 +50,7 @@ class ReaderCsvImpl(
     }
 
     @OptIn(ExperimentalAtomicApi::class)
-     fun <T : ICSVLine> readCSVEither(
+    fun <T : ICSVLine> readCSVEither(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
@@ -71,10 +65,10 @@ class ReaderCsvImpl(
                     val list = string.value.split(delimiter)
                     val toEntityEither: Either<LineError, T> = entity.toEntityEither(
                         strValues = list,
-                        string.index+1,
+                        string.index + 1,
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
                     )
-                    if (toEntityEither is Left){
+                    if (toEntityEither is Left) {
                         println(toEntityEither.value)
                     }
                     this.emit(toEntityEither)
@@ -100,7 +94,6 @@ class ReaderCsvImpl(
 
         return processDataFlow
     }
-
 
 
 }
