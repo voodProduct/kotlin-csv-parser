@@ -12,13 +12,6 @@ import ru.vood.kotlin.csv.parser.error.LineParseError
 
 class ClientEntityTemplateTestEither() : CsvEntityTemplate<ClientEntityCsv>() {
 
-    override fun toEntity(
-        strValues: List<String>,
-        headerWithIndex: ParsedHeader
-    ): Either<Throwable, ClientEntityCsv> {
-        TODO()
-    }
-
     override fun toEntityEither(
         strValues: List<String>,
         lineIndex: Int,

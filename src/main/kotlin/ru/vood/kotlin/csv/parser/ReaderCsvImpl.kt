@@ -21,7 +21,7 @@ class ReaderCsvImpl(
         entity: CsvEntityTemplate<T>,
     ): Flow<Either<ILineError, T>> {
         val parsedHeader = AtomicReference<ParsedHeader?>(null)
-        val processDataFlow = stringFlow
+        return stringFlow
             .withIndex()
             .flowOn(dispatcher)
             .filterNot { it.value.isBlank() || it.value.replace(delimiter, "").isBlank() }
@@ -37,27 +37,11 @@ class ReaderCsvImpl(
                         println(toEntityEither.value)
                     }
                     this.emit(toEntityEither)
-
-
-//                    entity.toEntity(
-//                        strValues = list,
-//                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
-//                    )
-//
-//                        .onLeft { err ->
-//                            println(err.message)
-////                        entity.logger.error(err.message)
-//                        }
-//                        .onRight {
-//                            this.emit(it)
-//                        }
                 } else {
                     parsedHeader.exchange(parseHeader(header = string.value, delimiter = delimiter))
 
                 }
             }
-
-        return processDataFlow
     }
 
 
