@@ -6,7 +6,7 @@ import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import kotlin.reflect.KClass
 
-sealed interface ICsvError
+interface ICsvError
 
 data class CsvFieldError(
     val fieldName: IFieldConstants<*>,
@@ -15,7 +15,7 @@ data class CsvFieldError(
 
 sealed interface ICastError
 
-data class EnumCastError<E: Enum<E>>(
+data class EnumCastError<E : Enum<E>>(
     val errorClass: KClass<out Throwable>,
     val errorMsg: String?,
     val klass: KClass<E>

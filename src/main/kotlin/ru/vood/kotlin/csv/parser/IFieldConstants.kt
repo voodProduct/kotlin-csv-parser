@@ -1,22 +1,21 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.left
+import arrow.core.raise.RaiseDSL
 import arrow.core.right
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.CsvFieldError
 import ru.vood.kotlin.csv.parser.error.EnumCastError
 import ru.vood.kotlin.csv.parser.error.ICsvError
-import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.reflect.KProperty1
 
 /**
  * Базовый интерфейс для enums,которые используются для обозначения искомых полей в csv-файлах.
  */
-interface IFieldConstants<L: ICSVLine> {
+interface IFieldConstants<L : ICSVLine> {
 
     val fieldName: String
 
@@ -100,9 +99,9 @@ interface IFieldConstants<L: ICSVLine> {
 //    fun getBoolean(): Either<ICsvError, Boolean> =
 //        convert<Boolean>(this)
 //
-    context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-    inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
-        this.convert<String, L>()
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
+    this.convert<String, L>()
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInt(): Either<ICsvError, Int> =
@@ -113,7 +112,7 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(): Eit
     this.convert<LocalDate?, L>()
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
- inline fun <reified T, reified L: ICSVLine> IFieldConstants<L>.convert(): Either<ICsvError, T> {
+inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.convert(): Either<ICsvError, T> {
     val key = this.fieldName.lowercase()
     return ReaderCsvConverter.convertEither<T>(
         notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)],
@@ -127,7 +126,7 @@ context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 }
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified E: Enum<E>, reified L: ICSVLine> IFieldConstants<L>.getEnum(convert: (String) -> E): Either<ICsvError, E> {
+inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnum(convert: (String) -> E): Either<ICsvError, E> {
     val key = this.fieldName.lowercase()
     val catch = Either.catch { convert(notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)]) }
         .mapLeft {
@@ -136,4 +135,20 @@ inline fun <reified E: Enum<E>, reified L: ICSVLine> IFieldConstants<L>.getEnum(
         }
     return catch
 
+}
+
+
+@RaiseDSL
+inline fun<T> Either<ICsvError, T>.validate(
+    crossinline check: (T) -> Boolean,
+    crossinline raise: (T) -> ICsvError
+) : Either<ICsvError, T>{
+    return when (this) {
+        is Either.Left<ICsvError> -> this
+        is Either.Right<T> -> if (check(this.value)) {
+            this
+        } else {
+            raise(this.value).left()
+        }
+    }
 }

@@ -41,7 +41,7 @@ class CsvEntityTemplateTest : FunSpec({
         fun infiniteFlowClient(): Flow<String> {
 
             return flow {
-                var counter = 0
+                var counter = -2
                 emit(headerTest)
                 while (true) {
                     emit("name_${counter};${counter};${counter + 1};${counter + 2};GREEN")
