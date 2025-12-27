@@ -137,7 +137,6 @@ inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnu
 
 }
 
-
 @RaiseDSL
 inline fun<T> Either<ICsvError, T>.validate(
     crossinline check: (T) -> Boolean,
