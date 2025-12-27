@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 sealed interface ICsvError
 
 data class CsvFieldError(
-    val fieldName: IFieldConstants,
+    val fieldName: IFieldConstants<*>,
     val error: ICastError
 ) : ICsvError
 
