@@ -21,10 +21,13 @@ class CsvEntityTemplateTest : FunSpec({
                 entity = ClientEntityTemplateTestEither()
             )
             .map {
-                println(it)
+                //                println(it)
                 it
             }
             .toList()
+
+        toList
+            .forEach { println(it) }
 
 //        println(toList)
 

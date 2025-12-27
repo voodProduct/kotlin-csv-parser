@@ -19,7 +19,6 @@ interface IFieldConstants {
 
     val fieldName: String
 
-
     context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
     fun getShort(): Either<ICsvError, Short> =
         convert<Short>(this)

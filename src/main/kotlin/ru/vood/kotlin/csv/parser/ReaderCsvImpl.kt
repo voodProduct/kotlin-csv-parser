@@ -36,7 +36,7 @@ class ReaderCsvImpl(
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
                     )
                     if (toEntityEither is Left) {
-                        println(toEntityEither.value)
+//                        println(toEntityEither.value)
                     }
                     this.emit(toEntityEither)
                 } else {
