@@ -13,6 +13,15 @@ data class CsvFieldError(
     val error: ICastError
 ) : ICsvError
 
+data class HeaderFieldNotFoundError(
+    val fieldName: IFieldConstants<*>,
+) : ICsvError
+
+data class FieldNotFountByHeaderIndexError(
+    val fieldName: IFieldConstants<*>,
+) : ICsvError
+
+
 sealed interface ICastError
 
 data class EnumCastError<E : Enum<E>>(

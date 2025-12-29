@@ -1,14 +1,13 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.raise.RaiseDSL
 import arrow.core.right
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
-import ru.vood.kotlin.csv.parser.error.CsvFieldError
-import ru.vood.kotlin.csv.parser.error.EnumCastError
-import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.*
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -105,15 +104,18 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(): Eit
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.convert(): Either<ICsvError, T> {
     val key = this.fieldName.lowercase()
-    return ReaderCsvConverter.convertEither<T>(
-        notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)],
-    ).fold({
-        CsvFieldError(this, it).left()
-    }, {
-        it.right()
-    }
-    )
-
+    return (parsedHeader.headerWithIndex.getOrElse(key) { null }?.right() ?: HeaderFieldNotFoundError(this).left())
+            .flatMap { fieldIndex ->
+                notParsedCsvLine.strValues.getOrNull(fieldIndex)?.right()
+                    ?: FieldNotFountByHeaderIndexError(this).left()
+            }
+            .flatMap { fieldValue ->
+                ReaderCsvConverter.convertEither<T>(fieldValue)
+                    .fold(
+                        ifLeft = { CsvFieldError(this, it).left() },
+                        ifRight = { it.right() }
+                    )
+            }
 }
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
