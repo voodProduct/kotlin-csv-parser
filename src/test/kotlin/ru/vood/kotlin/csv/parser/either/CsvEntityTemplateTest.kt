@@ -74,6 +74,7 @@ class CsvEntityTemplateTest : FunSpec({
                 }
             }
         }
+
         fun List<String>.toInputStream(
             charset: Charset = Charsets.UTF_8,
             lineSeparator: String = System.lineSeparator()

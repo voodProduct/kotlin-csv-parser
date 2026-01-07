@@ -14,6 +14,6 @@ data class ClientEntityCsv(
     }
 }
 
-enum class EyeColourEnum{
+enum class EyeColourEnum {
     RED, GREEN, BLUE
 }
