@@ -34,17 +34,16 @@ abstract class CsvEntityTemplate<T : ICSVLine>() {
             }
         }.fold(
             {
-                val left: Either<LineDtoCreateError, T> = LineDtoCreateError(
+                LineDtoCreateError(
                     lineIndex = lineIndex,
                     strValues = strValues,
                     headerWithIndex = headerWithIndex,
                     errorClass = it::class,
                     errorMsg = it.message
                 ).left()
-                left
             },
             {
-                val mapLeft = it.mapLeft {
+                it.mapLeft {
                     LineParseError(
                         lineIndex = lineIndex,
                         errors = it,
@@ -52,7 +51,6 @@ abstract class CsvEntityTemplate<T : ICSVLine>() {
                         headerWithIndex = headerWithIndex
                     )
                 }
-                mapLeft
             }
         )
 
