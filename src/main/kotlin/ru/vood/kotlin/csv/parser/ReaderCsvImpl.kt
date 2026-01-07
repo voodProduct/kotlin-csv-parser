@@ -23,8 +23,8 @@ class ReaderCsvImpl(
     ): Flow<Either<ILineError, T>> {
         val parsedHeader = AtomicReference<ParsedHeader?>(null)
         return stringFlow
-            .withIndex()
             .flowOn(dispatcher)
+            .withIndex()
             .filterNot { it.value.isBlank() || it.value.replace(delimiter, "").isBlank() }
             .transform { string ->
                 if (parsedHeader.load() != null) {
