@@ -10,6 +10,7 @@ import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertDouble
 import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertFloat
 import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertInt
 import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertLong
+import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertShort
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.*
@@ -115,6 +116,34 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLongNullable(noinline co
             else convertLong(it, convert)
         }
 
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getShort(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short> =
+    extractValue()
+        .flatMap { convertShort(it, convert) }
+
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getShortNullable(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short?> =
+    extractValue()
+        .flatMap {
+            if (it == "" || it == "NULL") null.right()
+            else convertShort(it, convert)
+        }
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
+    extractValue()
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getStringNullable(): Either<ICsvError, String?> {
+    return extractValue()
+        .flatMap {
+            if (it == "" || it == "NULL") null.right()
+            else it.right()
+        }
+}
+
+
 //--------------------------------
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTimeNullable(): Either<ICsvError, LocalDateTime?> =
@@ -124,14 +153,6 @@ context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstantNullable(): Either<ICsvError, Instant?> =
     convert<Instant?, L>()
 
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <L : ICSVLine> IFieldConstants<L>.getStringNullable(block: () -> String?): String? = block()
-
-
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getShortNullable(): Either<ICsvError, Short?> =
-    convert<Short?, L>()
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDate(): Either<ICsvError, LocalDate> =
@@ -145,14 +166,6 @@ context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstant(): Either<ICsvError, Instant> =
     convert<Instant, L>()
 
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getShort(): Either<ICsvError, Short> =
-    convert<Short, L>()
-
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
-    this.convert<String, L>()
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(): Either<ICsvError, LocalDate?> =

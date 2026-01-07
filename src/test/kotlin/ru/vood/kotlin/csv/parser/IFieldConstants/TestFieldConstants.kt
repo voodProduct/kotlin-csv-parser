@@ -1,7 +1,6 @@
 package ru.vood.kotlin.csv.parser.IFieldConstants
 
 import arrow.core.Either
-import arrow.core.left
 import arrow.core.right
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -13,10 +12,8 @@ import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.CsvFieldError
 import ru.vood.kotlin.csv.parser.error.EnumCastError
-import ru.vood.kotlin.csv.parser.error.ICastError
 import ru.vood.kotlin.csv.parser.error.ICsvError
 import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
-import ru.vood.kotlin.csv.parser.error.UnsupportedClassError
 import ru.vood.kotlin.csv.parser.getBoolean
 import ru.vood.kotlin.csv.parser.getBooleanNullable
 import ru.vood.kotlin.csv.parser.getDouble
@@ -406,8 +403,8 @@ class CsvParserTest : FunSpec({
 
         with(line) {
             with(validHeader) {
-                val result = TestField.getStringNullable { "customValue" }
-                result shouldBe "customValue"
+                val result = TestField.getStringNullable()
+                result shouldBe "test".right()
             }
         }
     }
