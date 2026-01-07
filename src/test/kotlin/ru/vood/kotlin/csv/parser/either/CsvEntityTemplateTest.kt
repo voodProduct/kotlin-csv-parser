@@ -18,7 +18,7 @@ class CsvEntityTemplateTest : FunSpec({
 //        val count = 500_000
         val count = 3
         val toList = readerCsvImpl
-            .readCSVEither(
+            .readCSV(
                 stringFlow = infiniteFlowClient().take(count),
                 delimiter = ";",
                 entity = ClientEntityTemplateTestEither()
@@ -42,7 +42,7 @@ class CsvEntityTemplateTest : FunSpec({
         val stringFlow: List<String> = infiniteFlowClient().take(count).toList()
 
         val toList = readerCsvImpl
-            .readCSVEither(
+            .readCSV(
                 inputStream = stringFlow.toInputStream(),
                 delimiter = ";",
                 entity = ClientEntityTemplateTestEither()

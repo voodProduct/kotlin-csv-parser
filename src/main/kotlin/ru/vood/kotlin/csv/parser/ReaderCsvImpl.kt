@@ -20,7 +20,7 @@ class ReaderCsvImpl(
 ) : IReaderCsv {
 
     @OptIn(ExperimentalAtomicApi::class)
-    override fun <T : ICSVLine> readCSVEither(
+    override fun <T : ICSVLine> readCSV(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
@@ -35,7 +35,7 @@ class ReaderCsvImpl(
                     val list = NotParsedCsvLine(string.value.split(delimiter))
                     val toEntityEither: Either<ILineError, T> = entity.toEntity(
                         strValues = list,
-                        string.index + 1,
+                        lineIndex = string.index + 1,
                         headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
                     )
                     this.emit(toEntityEither)
