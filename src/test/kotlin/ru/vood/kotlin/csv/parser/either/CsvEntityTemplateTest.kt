@@ -10,7 +10,7 @@ val readerCsvImpl = ReaderCsvImpl()
 class CsvEntityTemplateTest : FunSpec({
 
 
-    test("header") {
+    test("Full parsing") {
 
 //        val count = 500_000
         val count = 3
@@ -29,10 +29,7 @@ class CsvEntityTemplateTest : FunSpec({
         toList
             .forEach { println(it) }
 
-//        println(toList)
-
         toList.size shouldBe count - 1
-
     }
 }) {
 
