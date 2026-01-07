@@ -8,7 +8,7 @@ import ru.vood.kotlin.csv.parser.error.ICastError
 import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
 
 object CsvTypeConverter {
-    private val booleanFun: (value: String) -> Either<UnsupportedBooleanValueError, Boolean> = { value ->
+    val booleanFun: (value: String) -> Either<UnsupportedBooleanValueError, Boolean> = { value ->
         when (value.lowercase()) {
             "true", "1", "yes" -> true.right()
             "false", "0", "no" -> false.right()
