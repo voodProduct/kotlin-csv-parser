@@ -1,7 +1,6 @@
 package ru.vood.kotlin.csv.parser
 
 import arrow.core.Either
-import arrow.core.Either.Left
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -9,9 +8,6 @@ import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ILineError
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 

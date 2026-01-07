@@ -22,7 +22,7 @@ data class FieldNotFountByHeaderIndexError(
 ) : ICsvError
 
 
-sealed interface ICastError: ICsvError
+sealed interface ICastError : ICsvError
 
 data class EnumCastError<E : Enum<E>>(
     val errorClass: KClass<out Throwable>,

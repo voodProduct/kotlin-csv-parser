@@ -43,7 +43,8 @@ interface IReaderCsv {
         charset: String = "UTF-8",
         bufferSize: Int = 8192,
         skipEmptyLines: Boolean = false
-    ): Flow<IndexedValue<Either<ILineError, T>>> = readCSV(inputStream, delimiter, entity, charset, bufferSize, skipEmptyLines).withIndex()
+    ): Flow<IndexedValue<Either<ILineError, T>>> =
+        readCSV(inputStream, delimiter, entity, charset, bufferSize, skipEmptyLines).withIndex()
 
 
     private fun InputStream.toLineFlow(
