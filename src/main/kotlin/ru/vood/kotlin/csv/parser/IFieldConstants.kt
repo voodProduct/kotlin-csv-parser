@@ -18,14 +18,27 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
- * Базовый интерфейс для enums,которые используются для обозначения искомых полей в csv-файлах.
+ * Базовый интерфейс для enums, которые используются для обозначения искомых полей в csv-файлах.
+ *
+ * @param L Тип DTO в которую будет преобразована строка
  */
 interface IFieldConstants<L : ICSVLine> {
-
+    /**
+     * Название поля в CSV файле.
+     * Это значение используется для поиска соответствующего столбца в заголовке CSV.
+     */
     val fieldName: String
-
 }
 
+/**
+ * Извлекает nullable логическое значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Boolean]. По умолчанию поддерживает значения:
+ *                "true", "1", "yes" → `true`
+ *                "false", "0", "no" → `false`
+ * @return [Either] с результатом: [Right] содержит nullable [Boolean] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getBooleanNullable(
     noinline convert: (String) -> Either<UnsupportedBooleanValueError, Boolean> = { value ->
@@ -43,6 +56,15 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getBooleanNullable(
         }
 }
 
+/**
+ * Извлекает не-null логическое значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Boolean]. По умолчанию поддерживает значения:
+ *                "true", "1", "yes" → `true`
+ *                "false", "0", "no" → `false`
+ * @return [Either] с результатом: [Right] содержит [Boolean],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено, значение некорректно или null.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getBoolean(
     noinline convert: (String) -> Either<UnsupportedBooleanValueError, Boolean> = { value ->
@@ -56,55 +78,143 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getBoolean(
     extractValue()
         .flatMap { convertBoolean(it, convert) }
 
+/**
+ * Извлекает целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Int]. По умолчанию использует [String.toInt].
+ * @return [Either] с результатом: [Right] содержит [Int],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInt(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int> =
     get(convert)
 
+/**
+ * Извлекает nullable целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Int]. По умолчанию использует [String.toInt].
+ * @return [Either] с результатом: [Right] содержит nullable [Int] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getIntNullable(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int?> =
     getNullable(convert)
 
+/**
+ * Извлекает значение с плавающей точкой двойной точности из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Double]. По умолчанию использует [String.toDouble].
+ * @return [Either] с результатом: [Right] содержит [Double],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getDouble(noinline convert: (String) -> Double = { it.toDouble() }): Either<ICsvError, Double> =
     get(convert)
 
+/**
+ * Извлекает nullable значение с плавающей точкой двойной точности из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Double]. По умолчанию использует [String.toDouble].
+ * @return [Either] с результатом: [Right] содержит nullable [Double] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getDoubleNullable(noinline convert: (String) -> Double = { it.toDouble() }): Either<ICsvError, Double?> =
     getNullable(convert)
 
+/**
+ * Извлекает значение с плавающей точкой одинарной точности из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Float]. По умолчанию использует [String.toFloat].
+ * @return [Either] с результатом: [Right] содержит [Float],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getFloat(noinline convert: (String) -> Float = { it.toFloat() }): Either<ICsvError, Float> =
     get(convert)
 
-
+/**
+ * Извлекает nullable значение с плавающей точкой одинарной точности из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Float]. По умолчанию использует [String.toFloat].
+ * @return [Either] с результатом: [Right] содержит nullable [Float] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getFloatNullable(noinline convert: (String) -> Float = { it.toFloat() }): Either<ICsvError, Float?> =
     getNullable(convert)
 
+/**
+ * Извлекает длинное целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Long]. По умолчанию использует [String.toLong].
+ * @return [Either] с результатом: [Right] содержит [Long],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLong(noinline convert: (String) -> Long = { it.toLong() }): Either<ICsvError, Long> =
     get(convert)
 
+/**
+ * Извлекает nullable длинное целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Long]. По умолчанию использует [String.toLong].
+ * @return [Either] с результатом: [Right] содержит nullable [Long] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLongNullable(noinline convert: (String) -> Long = { it.toLong() }): Either<ICsvError, Long?> =
     getNullable(convert)
 
+/**
+ * Извлекает короткое целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Short]. По умолчанию использует [String.toShort].
+ * @return [Either] с результатом: [Right] содержит [Short],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getShort(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short> =
     get(convert)
 
+/**
+ * Извлекает nullable короткое целочисленное значение из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Short]. По умолчанию использует [String.toShort].
+ * @return [Either] с результатом: [Right] содержит nullable [Short] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getShortNullable(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short?> =
     getNullable(convert)
 
+/**
+ * Извлекает строковое значение из CSV строки по имени поля.
+ *
+ * @return [Either] с результатом: [Right] содержит [String],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
     extractValue()
 
+/**
+ * Извлекает nullable строковое значение из CSV строки по имени поля.
+ *
+ * @return [Either] с результатом: [Right] содержит nullable [String] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getStringNullable(): Either<ICsvError, String?> =
     getNullable { it }
 
+/**
+ * Извлекает значение даты-времени из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [LocalDateTime]. По умолчанию использует [LocalDateTime.parse].
+ * @return [Either] с результатом: [Right] содержит [LocalDateTime],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTime(
     noinline convert: (String) -> LocalDateTime = {
@@ -115,6 +225,13 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTime(
 ): Either<ICsvError, LocalDateTime> =
     get(convert)
 
+/**
+ * Извлекает nullable значение даты-времени из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [LocalDateTime]. По умолчанию использует [LocalDateTime.parse].
+ * @return [Either] с результатом: [Right] содержит nullable [LocalDateTime] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTimeNullable(
     noinline convert: (String) -> LocalDateTime = {
@@ -125,6 +242,13 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTimeNullable(
 ): Either<ICsvError, LocalDateTime?> =
     getNullable(convert)
 
+/**
+ * Извлекает значение момента времени (Instant) из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Instant]. По умолчанию использует [Instant.parse].
+ * @return [Either] с результатом: [Right] содержит [Instant],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstant(
     noinline convert: (String) -> Instant = {
@@ -135,6 +259,13 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstant(
 ): Either<ICsvError, Instant> =
     get(convert)
 
+/**
+ * Извлекает nullable значение момента времени (Instant) из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [Instant]. По умолчанию использует [Instant.parse].
+ * @return [Either] с результатом: [Right] содержит nullable [Instant] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstantNullable(
     noinline convert: (String) -> Instant = {
@@ -145,6 +276,13 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstantNullable(
 ): Either<ICsvError, Instant?> =
     getNullable(convert)
 
+/**
+ * Извлекает значение даты из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [LocalDate]. По умолчанию использует [LocalDate.parse].
+ * @return [Either] с результатом: [Right] содержит [LocalDate],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDate(
     noinline convert: (String) -> LocalDate = {
@@ -155,6 +293,13 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDate(
 ): Either<ICsvError, LocalDate> =
     get(convert)
 
+/**
+ * Извлекает nullable значение даты из CSV строки по имени поля.
+ *
+ * @param convert Функция преобразования строки в [LocalDate]. По умолчанию использует [LocalDate.parse].
+ * @return [Either] с результатом: [Right] содержит nullable [LocalDate] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(
     noinline convert: (String) -> LocalDate = {
@@ -165,15 +310,38 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(
 ): Either<ICsvError, LocalDate?> =
     getNullable(convert)
 
+/**
+ * Извлекает значение перечисления из CSV строки по имени поля.
+ *
+ * @param E Тип перечисления
+ * @param convert Функция преобразования строки в [E].
+ * @return [Either] с результатом: [Right] содержит значение перечисления [E],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnum(noinline convert: (String) -> E): Either<ICsvError, E> =
     get(convert)
 
+/**
+ * Извлекает nullable значение перечисления из CSV строки по имени поля.
+ *
+ * @param E Тип перечисления
+ * @param convert Функция преобразования строки в [E].
+ * @return [Either] с результатом: [Right] содержит nullable значение перечисления [E] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или значение некорректно.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnumNullable(noinline convert: (String) -> E): Either<ICsvError, E?> =
     getNullable(convert)
 
-
+/**
+ * Извлекает значение произвольного типа из CSV строки по имени поля.
+ *
+ * @param T Тип возвращаемого значения
+ * @param convert Функция преобразования строки в [T].
+ * @return [Either] с результатом: [Right] содержит значение типа [T],
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или преобразование не удалось.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.get(
     noinline convert: (String) -> T
@@ -181,6 +349,14 @@ inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.get(
     extractValue()
         .flatMap { convertTo(it, convert) }
 
+/**
+ * Извлекает nullable значение произвольного типа из CSV строки по имени поля.
+ *
+ * @param T Тип возвращаемого значения
+ * @param convert Функция преобразования строки в [T].
+ * @return [Either] с результатом: [Right] содержит nullable значение типа [T] или `null`,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено или преобразование не удалось.
+ */
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.getNullable(
     noinline convert: (String) -> T
@@ -191,7 +367,12 @@ inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.getNullable(
             else convertTo(it, convert)
         }
 
-
+/**
+ * Извлекает строковое значение из CSV строки по имени поля.
+ *
+ * @return [Either] с результатом: [Right] содержит строковое значение,
+ *         [Left] содержит ошибку [ICsvError] если поле не найдено в заголовке или в строке.
+ */
 context(
     notParsedCsvLine: NotParsedCsvLine,
     parsedHeader: ParsedHeader)
@@ -206,6 +387,14 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.extractValue(): Either<ICsv
         }
 }
 
+/**
+ * Выполняет валидацию значения, полученного из CSV.
+ *
+ * @param check Функция проверки условия. Возвращает `true` если значение валидно.
+ * @param raise Функция создания ошибки в случае невалидного значения.
+ * @return [Either] с результатом: [Right] содержит исходное значение если оно валидно,
+ *         [Left] содержит ошибку [ICsvError] если значение не прошло проверку.
+ */
 @RaiseDSL
 inline fun <T> Either<ICsvError, T>.validate(
     crossinline check: (T) -> Boolean,
