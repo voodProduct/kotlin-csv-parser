@@ -50,7 +50,7 @@ class ReaderCsvConverterTest : FunSpec({
 
         convertEither shouldBe LocalDateTime.of(2024, 12, 25, 15, 30, 45, 123456789).right()
     }
-    xtest("LocalDate - OK") {
+    test("LocalDate - OK") {
         val convertEither = convertEither<LocalDate>("2024-12-25")
         convertEither shouldBe LocalDate.of(2024, 12, 25).right()
     }

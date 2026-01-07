@@ -6,14 +6,13 @@ import arrow.core.left
 import arrow.core.raise.RaiseDSL
 import arrow.core.right
 import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertBoolean
-import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertDouble
-import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertFloat
-import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertInt
-import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertLong
-import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertShort
+import ru.vood.kotlin.csv.parser.converter.CsvTypeConverter.convertTo
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
-import ru.vood.kotlin.csv.parser.error.*
+import ru.vood.kotlin.csv.parser.error.FieldNotFountByHeaderIndexError
+import ru.vood.kotlin.csv.parser.error.HeaderFieldNotFoundError
+import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,118 +57,140 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.getBoolean(
         .flatMap { convertBoolean(it, convert) }
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getInt(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int> {
-    return extractValue()
-        .flatMap { convertInt(it, convert) }
-}
-
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getInt(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int> =
+    get(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getIntNullable(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int?> {
-    return extractValue()
-        .flatMap {
-            if (it == "" || it == "NULL") null.right()
-            else convertInt(it, convert)
-        }
-}
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getIntNullable(noinline convert: (String) -> Int = { it.toInt() }): Either<ICsvError, Int?> =
+    getNullable(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getDouble(noinline convert: (String) -> Double = { it.toDouble() }): Either<ICsvError, Double> =
-    extractValue()
-        .flatMap { convertDouble(it, convert) }
-
+    get(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getDoubleNullable(noinline convert: (String) -> Double = { it.toDouble() }): Either<ICsvError, Double?> =
-    extractValue()
-        .flatMap {
-            if (it == "" || it == "NULL") null.right()
-            else convertDouble(it, convert)
-        }
-
+    getNullable(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getFloat(noinline convert: (String) -> Float = { it.toFloat() }): Either<ICsvError, Float> =
-    extractValue()
-        .flatMap { convertFloat(it, convert) }
+    get(convert)
 
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getFloatNullable(noinline convert: (String) -> Float = { it.toFloat() }): Either<ICsvError, Float?> =
-    extractValue()
-        .flatMap {
-            if (it == "" || it == "NULL") null.right()
-            else convertFloat(it, convert)
-        }
+    getNullable(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLong(noinline convert: (String) -> Long = { it.toLong() }): Either<ICsvError, Long> =
-    extractValue()
-        .flatMap { convertLong(it, convert) }
-
+    get(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getLongNullable(noinline convert: (String) -> Long = { it.toLong() }): Either<ICsvError, Long?> =
-    extractValue()
-        .flatMap {
-            if (it == "" || it == "NULL") null.right()
-            else convertLong(it, convert)
-        }
+    getNullable(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getShort(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short> =
-    extractValue()
-        .flatMap { convertShort(it, convert) }
-
+    get(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getShortNullable(noinline convert: (String) -> Short = { it.toShort() }): Either<ICsvError, Short?> =
-    extractValue()
-        .flatMap {
-            if (it == "" || it == "NULL") null.right()
-            else convertShort(it, convert)
-        }
+    getNullable(convert)
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
 inline fun <reified L : ICSVLine> IFieldConstants<L>.getString(): Either<ICsvError, String> =
     extractValue()
 
 context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getStringNullable(): Either<ICsvError, String?> {
-    return extractValue()
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getStringNullable(): Either<ICsvError, String?> =
+    getNullable { it }
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTime(
+    noinline convert: (String) -> LocalDateTime = {
+        LocalDateTime.parse(
+            it
+        )
+    }
+): Either<ICsvError, LocalDateTime> =
+    get(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTimeNullable(
+    noinline convert: (String) -> LocalDateTime = {
+        LocalDateTime.parse(
+            it
+        )
+    }
+): Either<ICsvError, LocalDateTime?> =
+    getNullable(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstant(
+    noinline convert: (String) -> Instant = {
+        Instant.parse(
+            it
+        )
+    }
+): Either<ICsvError, Instant> =
+    get(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstantNullable(
+    noinline convert: (String) -> Instant = {
+        Instant.parse(
+            it
+        )
+    }
+): Either<ICsvError, Instant?> =
+    getNullable(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDate(
+    noinline convert: (String) -> LocalDate = {
+        LocalDate.parse(
+            it
+        )
+    }
+): Either<ICsvError, LocalDate> =
+    get(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(
+    noinline convert: (String) -> LocalDate = {
+        LocalDate.parse(
+            it
+        )
+    }
+): Either<ICsvError, LocalDate?> =
+    getNullable(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnum(noinline convert: (String) -> E): Either<ICsvError, E> =
+    get(convert)
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnumNullable(noinline convert: (String) -> E): Either<ICsvError, E?> =
+    getNullable(convert)
+
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.get(
+    noinline convert: (String) -> T
+): Either<ICsvError, T> =
+    extractValue()
+        .flatMap { convertTo(it, convert) }
+
+context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
+inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.getNullable(
+    noinline convert: (String) -> T
+): Either<ICsvError, T?> =
+    extractValue()
         .flatMap {
             if (it == "" || it == "NULL") null.right()
-            else it.right()
+            else convertTo(it, convert)
         }
-}
 
-
-//--------------------------------
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTimeNullable(): Either<ICsvError, LocalDateTime?> =
-    this.convert<LocalDateTime?, L>()
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstantNullable(): Either<ICsvError, Instant?> =
-    convert<Instant?, L>()
-
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDate(): Either<ICsvError, LocalDate> =
-    convert<LocalDate, L>()
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateTime(): Either<ICsvError, LocalDateTime> =
-    convert<LocalDateTime, L>()
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getInstant(): Either<ICsvError, Instant> =
-    convert<Instant, L>()
-
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified L : ICSVLine> IFieldConstants<L>.getLocalDateNullable(): Either<ICsvError, LocalDate?> =
-    this.convert<LocalDate?, L>()
 
 context(
     notParsedCsvLine: NotParsedCsvLine,
@@ -183,37 +204,6 @@ inline fun <reified L : ICSVLine> IFieldConstants<L>.extractValue(): Either<ICsv
                         ?: FieldNotFountByHeaderIndexError(this).left()
                 }
         }
-}
-
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-@Deprecated("к удалению")
-inline fun <reified T, reified L : ICSVLine> IFieldConstants<L>.convert(): Either<ICsvError, T> {
-    val key = this.fieldName.lowercase()
-    return (parsedHeader.headerWithIndex.getOrElse(key) { null }?.right() ?: HeaderFieldNotFoundError(this).left())
-        .flatMap { fieldIndex ->
-            notParsedCsvLine.strValues.getOrNull(fieldIndex)?.right()
-                ?: FieldNotFountByHeaderIndexError(this).left()
-        }
-        .flatMap { fieldValue ->
-            ReaderCsvConverter.convertEither<T>(fieldValue)
-                .fold(
-                    ifLeft = { CsvFieldError(this, it).left() },
-                    ifRight = { it.right() }
-                )
-        }
-}
-
-context(notParsedCsvLine: NotParsedCsvLine, parsedHeader: ParsedHeader)
-inline fun <reified E : Enum<E>, reified L : ICSVLine> IFieldConstants<L>.getEnum(convert: (String) -> E): Either<ICsvError, E> {
-    val key = this.fieldName.lowercase()
-    val catch = Either.catch { convert(notParsedCsvLine.strValues[parsedHeader.headerWithIndex.getValue(key)]) }
-        .mapLeft {
-            CsvFieldError(this, EnumCastError(it::class, it.message, E::class))
-
-        }
-    return catch
-
 }
 
 @RaiseDSL

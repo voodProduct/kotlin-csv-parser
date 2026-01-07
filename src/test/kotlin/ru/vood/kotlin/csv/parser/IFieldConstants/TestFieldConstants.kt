@@ -1,41 +1,18 @@
 package ru.vood.kotlin.csv.parser.IFieldConstants
 
 import arrow.core.Either
+import arrow.core.left
 import arrow.core.right
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import ru.vood.kotlin.csv.parser.ICSVLine
-import ru.vood.kotlin.csv.parser.IFieldConstants
-import ru.vood.kotlin.csv.parser.convert
+import ru.vood.kotlin.csv.parser.*
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.CsvFieldError
 import ru.vood.kotlin.csv.parser.error.EnumCastError
-import ru.vood.kotlin.csv.parser.error.ICsvError
+import ru.vood.kotlin.csv.parser.error.HeaderFieldNotFoundError
 import ru.vood.kotlin.csv.parser.error.UnsupportedBooleanValueError
-import ru.vood.kotlin.csv.parser.getBoolean
-import ru.vood.kotlin.csv.parser.getBooleanNullable
-import ru.vood.kotlin.csv.parser.getDouble
-import ru.vood.kotlin.csv.parser.getDoubleNullable
-import ru.vood.kotlin.csv.parser.getEnum
-import ru.vood.kotlin.csv.parser.getFloat
-import ru.vood.kotlin.csv.parser.getFloatNullable
-import ru.vood.kotlin.csv.parser.getInstant
-import ru.vood.kotlin.csv.parser.getInstantNullable
-import ru.vood.kotlin.csv.parser.getInt
-import ru.vood.kotlin.csv.parser.getIntNullable
-import ru.vood.kotlin.csv.parser.getLocalDate
-import ru.vood.kotlin.csv.parser.getLocalDateNullable
-import ru.vood.kotlin.csv.parser.getLocalDateTime
-import ru.vood.kotlin.csv.parser.getLocalDateTimeNullable
-import ru.vood.kotlin.csv.parser.getLong
-import ru.vood.kotlin.csv.parser.getLongNullable
-import ru.vood.kotlin.csv.parser.getShort
-import ru.vood.kotlin.csv.parser.getShortNullable
-import ru.vood.kotlin.csv.parser.getString
-import ru.vood.kotlin.csv.parser.getStringNullable
-import ru.vood.kotlin.csv.parser.validate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -51,46 +28,8 @@ data object TestField : IFieldConstants<TestCsvLine> {
     override val fieldName = "testField"
 }
 
-object TestField2 : IFieldConstants<TestCsvLine> {
-    override val fieldName = "testField2"
-}
-
-// Mock конвертера
-object ReaderCsvConverter {
-   /* inline fun <reified T> convertEither(value: String): Either<ICastError, T?> {
-        val either = when (T::class) {
-            String::class -> Either.Right(value as T)
-            Int::class -> (value.toInt() as T).right()
-            Long::class -> (value.toInt() as T).right()
-//            Short::class -> value.toShortOrNull()?.right() ?:
-//            IllegalStateException("Invalid Short").left()
-//            Float::class -> value.toFloatOrNull()?.right() ?:
-//            IllegalStateException("Invalid Float").left()
-//            Double::class -> value.toDoubleOrNull()?.right() ?:
-//            IllegalStateException("Invalid Double").left()
-//            Boolean::class -> when (value.lowercase()) {
-//                "true", "1" -> true.right()
-//                "false", "0" -> false.right()
-//                else -> IllegalStateException("Invalid Boolean").left()
-//            }
-//            LocalDate::class -> LocalDate.parse(value).right()
-//            LocalDateTime::class -> LocalDateTime.parse(value).right()
-//            Instant::class -> Instant.parse(value).right()
-            else -> if (T::class.simpleName?.endsWith("?") == true) {
-                // Nullable типы
-                if (value.isEmpty()) null.right() else
-                    IllegalStateException("Not implemented for nullable").left()
-            } else {
-                IllegalStateException("Not implemented").left()
-            }
-        }
-        return either.mapLeft { error ->
-            UnsupportedClassError(error.message ?: "Unknown error")
-//            object : ICastError {
-//                override fun toString() = error.message ?: "Unknown error"
-//            }
-        }
-    }*/
+data object TestFieldNoField : IFieldConstants<TestCsvLine> {
+    override val fieldName = "qwer"
 }
 
 class CsvParserTest : FunSpec({
@@ -420,6 +359,50 @@ class CsvParserTest : FunSpec({
         }
     }
 
+
+    test("getEnum should return valid enum nullable") {
+        val line = NotParsedCsvLine(listOf("", "other"))
+
+        with(line) {
+            with(validHeader) {
+                val result = TestField.getEnumNullable { TestEnum.valueOf(it) }
+                result shouldBe null.right()
+            }
+        }
+    }
+
+    test("getEnum should return valid enum nullable 2") {
+        val line = NotParsedCsvLine(listOf("NULL", "other"))
+
+        with(line) {
+            with(validHeader) {
+                val result = TestField.getEnumNullable { TestEnum.valueOf(it) }
+                result shouldBe null.right()
+            }
+        }
+    }
+
+    test("bad field, no in header") {
+        val line = NotParsedCsvLine(listOf("NULL", "other"))
+
+        with(line) {
+            with(validHeader) {
+                val result = TestFieldNoField.getEnumNullable { TestEnum.valueOf(it) }
+                result shouldBe HeaderFieldNotFoundError(fieldName = TestFieldNoField).left()
+            }
+        }
+    }
+
+    test("bad field, empty csv line") {
+        val line = NotParsedCsvLine(listOf())
+        with(line) {
+            with(validHeader) {
+                val result = TestFieldNoField.getEnumNullable { TestEnum.valueOf(it) }
+                result shouldBe HeaderFieldNotFoundError(fieldName = TestFieldNoField).left()
+            }
+        }
+    }
+
     test("getEnum should return error for invalid enum value") {
         val line = NotParsedCsvLine(listOf("INVALID_VALUE", "other"))
 
@@ -430,6 +413,8 @@ class CsvParserTest : FunSpec({
             }
         }
     }
+
+
 
     test("validate should pass for valid condition") {
         val line = NotParsedCsvLine(listOf("42", "other"))
@@ -467,18 +452,6 @@ class CsvParserTest : FunSpec({
                     .validate({ it > 0 }, { CsvFieldError(TestField, UnsupportedBooleanValueError("asd")) })
 
                 result.shouldBeInstanceOf<Either.Left<CsvFieldError>>()
-            }
-        }
-    }
-
-    test("convert should handle different types") {
-        val line = NotParsedCsvLine(listOf("test", "other"))
-
-        with(line) {
-            with(validHeader) {
-                // Проверяем, что общая функция convert работает
-                val stringResult: Either<ICsvError, String> = TestField.convert()
-                stringResult shouldBe Either.Right("test")
             }
         }
     }
