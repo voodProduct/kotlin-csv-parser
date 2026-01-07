@@ -4,13 +4,16 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.*
 import ru.vood.kotlin.csv.parser.ReaderCsvImpl
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.nio.charset.Charset
 
 val readerCsvImpl = ReaderCsvImpl()
 
 class CsvEntityTemplateTest : FunSpec({
 
 
-    test("Full parsing") {
+    test("Full parsing flow") {
 
 //        val count = 500_000
         val count = 3
@@ -31,6 +34,31 @@ class CsvEntityTemplateTest : FunSpec({
 
         toList.size shouldBe count - 1
     }
+
+    test("Full parsing stream") {
+
+//        val count = 500_000
+        val count = 3
+        val stringFlow: List<String> = infiniteFlowClient().take(count).toList()
+
+        val toList = readerCsvImpl
+            .readCSVEither(
+                inputStream = stringFlow.toInputStream(),
+                delimiter = ";",
+                entity = ClientEntityTemplateTestEither()
+            )
+            .map {
+                //                println(it)
+                it
+            }
+            .toList()
+
+        toList
+            .forEach { println(it) }
+
+        toList.size shouldBe count - 1
+    }
+
 }) {
 
     companion object {
@@ -45,6 +73,13 @@ class CsvEntityTemplateTest : FunSpec({
                     counter++
                 }
             }
+        }
+        fun List<String>.toInputStream(
+            charset: Charset = Charsets.UTF_8,
+            lineSeparator: String = System.lineSeparator()
+        ): InputStream {
+            val content = this.joinToString(lineSeparator)
+            return ByteArrayInputStream(content.toByteArray(charset))
         }
     }
 }
