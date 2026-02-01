@@ -44,13 +44,13 @@ data class UnsupportedBooleanValueError(
 ) : ICastError
 
 sealed interface ILineError {
-    val lineIndex: Int
+    val lineIndex: Long
     val strValues: NotParsedCsvLine
     val headerWithIndex: ParsedHeader
 }
 
 data class LineDtoCreateError(
-    override val lineIndex: Int,
+    override val lineIndex: Long,
     override val strValues: NotParsedCsvLine,
     override val headerWithIndex: ParsedHeader,
     val errorClass: KClass<out Throwable>,
@@ -58,7 +58,7 @@ data class LineDtoCreateError(
 ) : ILineError
 
 data class LineParseError(
-    override val lineIndex: Int,
+    override val lineIndex: Long,
     val errors: NonEmptyList<ICsvError>,
     override val strValues: NotParsedCsvLine,
     override val headerWithIndex: ParsedHeader
