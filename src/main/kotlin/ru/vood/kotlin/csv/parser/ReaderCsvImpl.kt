@@ -3,44 +3,45 @@ package ru.vood.kotlin.csv.parser
 import arrow.core.Either
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import ru.vood.kotlin.csv.parser.HeaderUtil.parseHeader
 import ru.vood.kotlin.csv.parser.dto.NotParsedCsvLine
 import ru.vood.kotlin.csv.parser.dto.ParsedHeader
 import ru.vood.kotlin.csv.parser.error.ILineError
-import kotlin.concurrent.atomics.AtomicReference
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 class ReaderCsvImpl(
     val dispatcher: CoroutineDispatcher = Dispatchers.IO.limitedParallelism(10)
 ) : IReaderCsv {
 
-    @OptIn(ExperimentalAtomicApi::class)
     override fun <T : ICSVLine> readCSV(
         stringFlow: Flow<String>,
         delimiter: String,
         entity: CsvEntityTemplate<T>,
-    ): Flow<Either<ILineError, T>> {
-        val parsedHeader = AtomicReference<ParsedHeader?>(null)
-        return stringFlow
-            .flowOn(dispatcher)
-            .withIndex()
-            .filterNot { it.value.isBlank() || it.value.replace(delimiter, "").isBlank() }
-            .transform { string ->
-                if (parsedHeader.load() != null) {
-                    val list = NotParsedCsvLine(string.value.split(delimiter))
-                    val toEntityEither: Either<ILineError, T> = entity.toEntity(
-                        strValues = list,
-                        lineIndex = string.index + 1,
-                        headerWithIndex = parsedHeader.load() ?: error("Эта ошибка не должна возникнуть")
-                    )
-                    this.emit(toEntityEither)
-                } else {
-                    parsedHeader.exchange(parseHeader(header = string.value, delimiter = delimiter))
+    ): Flow<Either<ILineError, T>> = flow {
+        var parsedHeader: ParsedHeader? = null
+        var lineIndex = 0L
 
-                }
+        stringFlow.collect { line ->
+            lineIndex++
+
+            if (line.isEmpty() || line.all { it == delimiter[0] || it.isWhitespace() }) {
+                return@collect
             }
-    }
 
-
+            if(parsedHeader == null) {
+                parsedHeader = parseHeader(header = line, delimiter = delimiter)
+            }else {
+                val values = NotParsedCsvLine(line.split(delimiter))
+                emit(
+                    entity.toEntity(
+                        strValues = values,
+                        lineIndex = lineIndex,
+                        headerWithIndex = parsedHeader
+                    )
+                )
+            }
+        }
+    }.flowOn(dispatcher)
 }

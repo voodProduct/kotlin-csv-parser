@@ -23,7 +23,7 @@ abstract class CsvEntityTemplate<T : ICSVLine>() {
 
     fun toEntity(
         strValues: NotParsedCsvLine,
-        lineIndex: Int,
+        lineIndex: Long,
         headerWithIndex: ParsedHeader
     ): Either<ILineError, T> = Either
         .catch {
